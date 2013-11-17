@@ -4,5 +4,8 @@
     <string name="app_name">DataHU</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="text">文字</string>
+    <string name="content">内容</string>
+    <string name="something">一些事</string>
 
 </resources>
