@@ -16,7 +16,8 @@ public class MainActivity extends Activity {
 		GridView gridview = (GridView)findViewById(R.id.data_gridview);
 		datagridview = new DataGridView(gridview,wholesheet);
 		datagridview.createDataGridView();
-		datagridview.gridview.setAdapter(new CellAdapter(getApplicationContext(),wholesheet));
+		
+		gridview.setAdapter(new CellAdapter(getApplicationContext(),wholesheet));
 	} 
 
 	
