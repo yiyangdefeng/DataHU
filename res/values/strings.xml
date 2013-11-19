@@ -7,5 +7,6 @@
     <string name="text">文字</string>
     <string name="content">内容</string>
     <string name="something">一些事</string>
+    <string name="monosheet">单元格</string>
 
 </resources>

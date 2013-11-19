@@ -5,6 +5,6 @@ public class ColumnData {
 	protected float height;
 	protected String notes;
 	protected String title;
-	protected Column[] datas;
+	//protected Column[] datas;
 	
 }
