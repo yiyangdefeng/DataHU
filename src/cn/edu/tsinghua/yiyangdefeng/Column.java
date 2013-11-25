@@ -11,7 +11,7 @@ public class Column {
 	public Column() {
 		rows = 100;
 		data = new long[rows];
-		width = 120;
+		width = 200;
 		unit = "";
 		notes = "";
 	}

@@ -10,7 +10,7 @@ public class WholeSheet {
 	protected Column[] columndata;
 	
 	public WholeSheet() {
-		columns = 5;
+		columns = 100;
 		columndata = new Column[columns];
 		for (int i = 0; i < columns;i++) {
 			columndata[i] = new Column();
@@ -18,7 +18,7 @@ public class WholeSheet {
 		if (columndata[0] == null) {
 			Log.e("test","null pointer!");
 		}
-		height = 40;
+		height = 60;
 		name = "NewSheet";
 		graphtitle = "NewGraph";
 		
@@ -69,10 +69,12 @@ public class WholeSheet {
 	}
 	
 	//other functions
+	//work of Zhang
 	public void SaveData() {
 		
 	}
 	
+	//work of Zhang
 	public void LoadData() {
 		
 	}
