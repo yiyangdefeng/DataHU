@@ -3,11 +3,11 @@ package cn.edu.tsinghua.yiyangdefeng;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
-public class DataGridView {
+public class EditGridView {
 	protected GridView gridview;
 	protected WholeSheet wholesheet;
 	
-	public DataGridView (GridView gridview, WholeSheet wholesheet) {
+	public EditGridView (GridView gridview, WholeSheet wholesheet) {
 		this.gridview = gridview;
 		this.wholesheet = wholesheet;
 	}
@@ -21,5 +21,4 @@ public class DataGridView {
 		gridview.setLayoutParams(new FrameLayout.LayoutParams(width, -1));
 		
 	}
-
 }
