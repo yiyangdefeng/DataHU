@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
- xmlns:android="http://schemas.android.com/apk/res/android"
- android:orientation="vertical" 
- android:layout_width="fill_parent"
- android:layout_height="fill_parent"
- android:background="#FFFFFF"
- android:gravity="center">
- <TextView 
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:text="向右滑动"
-  android:textColor="#000000"
-  android:textSize="20dip"/>
- <HorizontalScrollView 
-  android:layout_width="fill_parent" 
-  android:layout_height="wrap_content"
-  android:background="#CCCCCC">
-  <LinearLayout 
-   android:layout_width="fill_parent"
-   android:layout_height="wrap_content"
-    android:orientation="horizontal">
-   <GridView 
-    android:id="@+id/gridView" 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
-  </LinearLayout>
- </HorizontalScrollView>
+    android:layout_height="fill_parent"
+    android:layout_marginBottom="dp"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:background="#FFFFFF"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="250dp"
+        android:text="新建表格" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
+        android:text="读取表格" />
+
+    <Button
+        android:id="@+id/gridcancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用帮助" />
+
+    <Button
+        android:id="@+id/gridconfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="退出软件" />
+ 
 </LinearLayout>
