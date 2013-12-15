@@ -16,16 +16,17 @@
             android:id="@+id/data_gridview"
             android:layout_width="1395dip"
             android:layout_height="fill_parent"
-            android:layout_gravity="center"
+            android:layout_gravity="left|center_vertical"
             android:background="#000000"
             android:columnWidth="31dip"
             android:gravity="center"
+            android:horizontalSpacing="1dip"
             android:numColumns="45"
             android:scrollbarAlwaysDrawHorizontalTrack="true"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:scrollbars="horizontal|vertical"
-            android:horizontalSpacing="1dip"
             android:verticalSpacing="1dip" />
+
     </FrameLayout>
 
 </HorizontalScrollView>

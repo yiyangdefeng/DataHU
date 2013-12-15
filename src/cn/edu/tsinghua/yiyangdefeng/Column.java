@@ -1,19 +1,37 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Column {
-	protected int rows;
 	protected float width;
-	protected long[] data;
+	protected List<Long> data;
 	protected String unit;
 	protected String notes;
 	protected VarType vt;
+	protected int rows;
 	
-	public Column() {
-		rows = 100;
-		data = new long[rows];
+	public Column(int rows) {
+		data = new ArrayList<Long>();
 		width = 200;
 		unit = "";
 		notes = "";
+		vt = VarType.X;
+		for (int i = 0; i < rows; i++) {
+			data.add(0l);
+		}
+	}
+	
+	public void setRows(int rows) {
+		if(rows < 0) {
+			return;
+		}
+		if(rows > this.rows) {
+			for (int i = this.rows; i < rows; i++) {
+				data.add(0l);
+			}
+		}
+		
 	}
 	
 	//set functions
@@ -26,7 +44,7 @@ public class Column {
 	}
 	
 	public void setData(long newdata,int row) {
-		this.data[row] = newdata;
+		this.data.set(row,newdata);
 	}
 	
 	public void setWidth(float width) {
@@ -34,13 +52,6 @@ public class Column {
 			return;
 		}
 		this.width = width;
-	}
-	
-	public void setRows (int rownum) {
-		if(rownum < 0) {
-			return;
-		}
-		this.rows = rownum;
 	}
 	
 	public void setType (VarType type) {
@@ -53,17 +64,13 @@ public class Column {
 	}
 	
 	public long getData(int row) {
-		return data[row];
+		return data.get(row);
 	}
 	
-	public long[] getAllData() {
+	public List<Long> getAllData() {
 		return data;
 	}
-	
-	public int getRows() {
-		return this.rows;
-	}
-	
+		
 	public String getNotes() {
 		return this.notes;
 	}
@@ -71,7 +78,6 @@ public class Column {
 	public String getUnit() {
 		return this.unit;
 	}
-	
 }
 
 enum VarType {

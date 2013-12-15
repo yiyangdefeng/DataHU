@@ -53,7 +53,7 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/newsheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -61,7 +61,7 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/loadsheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

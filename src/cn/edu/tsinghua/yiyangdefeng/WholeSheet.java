@@ -1,22 +1,24 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class WholeSheet {
 	protected int columns;
+	protected int rows;
 	protected float height;
 	protected String name;
 	protected String graphtitle;
-	protected Column[] columndata;
+	protected List<Column> columndata;
+	
 	
 	public WholeSheet() {
-		columns = 100;
-		columndata = new Column[columns];
+		columns = 5;
+		rows = 50;
+		columndata = new ArrayList<Column>();
 		for (int i = 0; i < columns;i++) {
-			columndata[i] = new Column();
-		}
-		if (columndata[0] == null) {
-			Log.e("test","null pointer!");
+			columndata.add(new Column(rows));
 		}
 		height = 60;
 		name = "NewSheet";
@@ -29,7 +31,25 @@ public class WholeSheet {
 		if (columns < 0) {
 			return;
 		}
+		if (columns > this.columns) {
+			for (int i = this.columns;i < columns;i++) {
+				columndata.add(new Column(rows));
+			}
+		}
 		this.columns = columns;
+	}
+	
+	public void setRows(int rows) {
+		if (rows < 0) {
+			return;
+		}
+		if (rows > this.rows) {
+			for (int i = 0; i < columns;i++) {
+				columndata.get(i).setRows(rows);
+			}
+			
+		}
+		this.rows = rows;
 	}
 	
 	public void setHeight (float height) {
@@ -65,7 +85,7 @@ public class WholeSheet {
 	}
 	
 	public Column getColumn(int rownumber) {
-		return columndata[rownumber];
+		return columndata.get(rownumber);
 	}
 	
 	//other functions
@@ -93,11 +113,7 @@ public class WholeSheet {
 	}
 	
 	public int getMaxRowNumber() {
-		int maxrownumber = 0;
-		for (int i = 0;i < this.getColumns();i++) {
-			maxrownumber = Math.max(maxrownumber, this.getColumn(i).getRows());
-		}
-		return maxrownumber;
+		return rows;
 	}
 	
 	public int calcWholeHeight() {
