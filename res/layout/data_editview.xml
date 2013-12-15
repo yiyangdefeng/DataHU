@@ -16,7 +16,6 @@
             android:id="@+id/data_gridview"
             android:layout_width="1395dip"
             android:layout_height="fill_parent"
-            android:layout_gravity="left|center_vertical"
             android:background="#000000"
             android:columnWidth="31dip"
             android:gravity="center"
