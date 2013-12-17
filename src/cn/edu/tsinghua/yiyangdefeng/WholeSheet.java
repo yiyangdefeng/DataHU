@@ -147,4 +147,30 @@ public class WholeSheet {
 			columns = columns - 1;
 		}
 	}
+	
+	public void insertRow() {
+		//add to the last of the sheet
+		for(int i = 0;i < columns;i++) {
+			columndata.get(i).data.add(0l);
+		}
+		rows = rows + 1;
+	}
+	
+	public void insertRow(int therowbefore) {
+		for (int i = 0;i < columns;i++) {
+			columndata.get(i).data.add(therowbefore, 0l);
+		}
+		rows = rows + 1;
+	}
+	
+	public void insertColumn() {
+		//add to the last of the sheet
+		columndata.add(new Column(rows, width));
+		columns = columns + 1;
+	}
+	
+	public void insertColumn(int thecolumnbefore) {
+		columndata.add(thecolumnbefore,new Column(rows,width));
+		columns = columns + 1;
+	}
 }

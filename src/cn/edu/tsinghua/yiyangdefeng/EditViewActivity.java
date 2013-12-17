@@ -19,7 +19,9 @@ public class EditViewActivity extends Activity {
 	protected final int OBSERVATIONMODE = Menu.FIRST + 1;
 	protected final int ERASEROW = Menu.FIRST + 2;
 	protected final int ERASECOLUMN = Menu.FIRST + 3;
-	protected final int DRAW = Menu.FIRST + 4;
+	protected final int CREATEROW = Menu.FIRST + 4;
+	protected final int CREATECOLUMN = Menu.FIRST + 5;
+	protected final int DRAW = Menu.FIRST + 6;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,8 @@ public class EditViewActivity extends Activity {
 		menu.add(Menu.NONE, OBSERVATIONMODE, Menu.NONE, "转入查看模式");
 		menu.add(Menu.NONE, ERASEROW, Menu.NONE, "删除行");
 		menu.add(Menu.NONE, ERASECOLUMN, Menu.NONE, "删除列");
+		menu.add(Menu.NONE, CREATEROW, Menu.NONE, "插入行");
+		menu.add(Menu.NONE, CREATECOLUMN, Menu.NONE, "插入列");
 		menu.add(Menu.NONE, DRAW, Menu.NONE, "画图");
 		return true;
 	}
@@ -120,6 +124,72 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 
+						}
+					});
+			builder.show();
+			return true;
+		case CREATEROW:
+			builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder.setTitle("请选择需要插入的位置的前一行，或者选择插在末尾");
+			currentrows = new String[wholesheet.getRows()];
+			for (int i = 0; i < wholesheet.getRows(); i++) {
+				currentrows[i] = String.valueOf(i + 1);
+			}
+			builder.setItems(currentrows,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							wholesheet.insertRow(which);
+						}
+
+					});
+			builder.setCancelable(true);
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.setPositiveButton("插在末尾", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							wholesheet.insertRow();
+						}
+					});
+			builder.show();
+			return true;
+		case CREATECOLUMN:
+			builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder.setTitle("请选择需要插入的位置的前一列，或者选择插在末尾");
+			currentcolumns = new String[wholesheet.getColumns()];
+			for (int i = 0; i < wholesheet.getColumns(); i++) {
+				currentcolumns[i] = String.valueOf(CommonTools.ChangeNumberintoLetter(i + 1));
+			}
+			builder.setItems(currentcolumns,
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							wholesheet.insertColumn(which);
+							mygridview.setNumColumns(wholesheet.getColumns() + EditCellAdapter.EXTRACOLUMNS);
+							setGridWidth();
+						}
+
+					});
+			builder.setCancelable(true);
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.setPositiveButton("插在末尾", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							wholesheet.insertColumn();
+							mygridview.setNumColumns(wholesheet.getColumns() + EditCellAdapter.EXTRACOLUMNS);
+							setGridWidth();
 						}
 					});
 			builder.show();
