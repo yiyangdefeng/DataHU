@@ -26,7 +26,7 @@ public class CellAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return ((wholesheet.getColumns() + EXTRACOLUMNS) * (wholesheet.getMaxRowNumber() + EXTRAROWS));
+		return ((wholesheet.getColumns() + EXTRACOLUMNS) * (wholesheet.getRows()+ EXTRAROWS));
 	}
 	
 	public void setItem(int column,int row,long newdata) {
@@ -51,7 +51,7 @@ public class CellAdapter extends BaseAdapter {
 		TextView tv;
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.textcell, null);
-		}
+		
 		tv = (TextView) convertView.findViewById(R.id.textcell);
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP,40);
 		tv.setHeight((int) wholesheet.getHeight());
@@ -74,6 +74,7 @@ public class CellAdapter extends BaseAdapter {
 			tv.setText(row + "," + column);
 		}
 		tv.refreshDrawableState();
+		}
 		return convertView;
 	}
 

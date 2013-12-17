@@ -11,9 +11,9 @@ public class Column {
 	protected VarType vt;
 	protected int rows;
 	
-	public Column(int rows) {
+	public Column(int rows, float width) {
 		data = new ArrayList<Long>();
-		width = 200;
+		this.width = width;
 		unit = "";
 		notes = "";
 		vt = VarType.X;
