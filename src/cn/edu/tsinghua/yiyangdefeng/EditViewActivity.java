@@ -1,15 +1,22 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 public class EditViewActivity extends Activity {
 	protected WholeSheet wholesheet;
@@ -22,11 +29,12 @@ public class EditViewActivity extends Activity {
 	protected final int CREATEROW = Menu.FIRST + 4;
 	protected final int CREATECOLUMN = Menu.FIRST + 5;
 	protected final int DRAW = Menu.FIRST + 6;
+	protected DataManager dm;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		wholesheet = new WholeSheet();
+		dm = new DataManager();		
 		setContentView(R.layout.data_editview);
 		mygridview = new MyGridView(this);
 		mygridview.setHorizontalScrollBarEnabled(true);
@@ -34,24 +42,50 @@ public class EditViewActivity extends Activity {
 		mygridview.setVerticalScrollBarEnabled(true);
 		mygridview.setBackgroundColor(Color.BLACK);
 		mygridview.setGravity(Gravity.CENTER);
-		mygridview.setNumColumns(wholesheet.getColumns()
-				+ EditCellAdapter.EXTRACOLUMNS);
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
-		setGridWidth();
-		titlewidth = 200;
-		mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
-				wholesheet, titlewidth));
-		FrameLayout fm = (FrameLayout)this.findViewById(R.id.edit_framelayout);
-		fm.addView(mygridview);
+		if (savedInstanceState == null) {
+			wholesheet = new WholeSheet();
+			mygridview.setNumColumns(wholesheet.getColumns()
+					+ EditCellAdapter.EXTRACOLUMNS);
+
+			setGridWidth();
+			mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
+					wholesheet));
+			FrameLayout fm = (FrameLayout) this
+					.findViewById(R.id.edit_framelayout);
+			fm.addView(mygridview);
+		}
+		else if (savedInstanceState.getString("FILENAME") != null) {
+			String filename = savedInstanceState.getString("FILENAME");
+			try {
+				wholesheet = dm.openFile(filename);
+				mygridview.setNumColumns(wholesheet.getColumns()
+						+ EditCellAdapter.EXTRACOLUMNS);
+
+				setGridWidth();
+				mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
+						wholesheet));
+				FrameLayout fm = (FrameLayout) this
+						.findViewById(R.id.edit_framelayout);
+				fm.addView(mygridview);
+			} catch (IOException e) {
+				Toast toast = new Toast(this);
+				toast.setText("很抱歉，读取文件出错！");
+				toast.show();
+			}
 	}
-	
-	public void setGridWidth () {
+		else {
+			throw new RuntimeException("Failure in creating editview!");
+		}
+	}
+
+	public void setGridWidth() {
 		int width = wholesheet.calcWholeWidth() + (int) wholesheet.getWidth()
 				* EditCellAdapter.EXTRACOLUMNS;
 		mygridview.setLayoutParams(new FrameLayout.LayoutParams(width, -1));
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -65,12 +99,26 @@ public class EditViewActivity extends Activity {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		AlertDialog.Builder builder;
 		switch (item.getItemId()) {
 		case SAVE:
-			saveWholeSheet();
+			File file = new File(Environment.getExternalStorageDirectory().getName() + "/DataHU");
+			file.mkdir();
+			Log.e("test",file.getName());
+			Date date = new Date();
+			String filepath = file.getName() + "/sheetdata" + String.valueOf(date.getDate()) + ".csv";
+			Log.e("test",filepath);
+			try {
+				dm.saveFile(wholesheet, filepath);
+				Toast toast = Toast.makeText(EditViewActivity.this,"保存文件" + filepath + "成功",Toast.LENGTH_LONG);
+				toast.show();
+			} catch (IOException e) {
+				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
+				toast.show();
+			}
 			return true;
 		case OBSERVATIONMODE:
 			gotoObserveMode();
@@ -88,6 +136,8 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.eraseRow(which);
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 						}
 
 					});
@@ -106,14 +156,16 @@ public class EditViewActivity extends Activity {
 			builder.setTitle("请选择需要删除的列");
 			String[] currentcolumns = new String[wholesheet.getColumns()];
 			for (int i = 0; i < wholesheet.getColumns(); i++) {
-				currentcolumns[i] = String.valueOf(CommonTools.ChangeNumberintoLetter(i + 1));
+				currentcolumns[i] = String.valueOf(CommonTools
+						.ChangeNumberintoLetter(i + 1));
 			}
 			builder.setItems(currentcolumns,
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.eraseColumn(which);
-							mygridview.setNumColumns(wholesheet.getColumns() + EditCellAdapter.EXTRACOLUMNS);
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 							setGridWidth();
 						}
 
@@ -140,6 +192,8 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertRow(which);
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 						}
 
 					});
@@ -151,10 +205,13 @@ public class EditViewActivity extends Activity {
 
 						}
 					});
-			builder.setPositiveButton("插在末尾", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton("插在末尾",
+					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertRow();
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 						}
 					});
 			builder.show();
@@ -164,14 +221,16 @@ public class EditViewActivity extends Activity {
 			builder.setTitle("请选择需要插入的位置的前一列，或者选择插在末尾");
 			currentcolumns = new String[wholesheet.getColumns()];
 			for (int i = 0; i < wholesheet.getColumns(); i++) {
-				currentcolumns[i] = String.valueOf(CommonTools.ChangeNumberintoLetter(i + 1));
+				currentcolumns[i] = String.valueOf(CommonTools
+						.ChangeNumberintoLetter(i + 1));
 			}
 			builder.setItems(currentcolumns,
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertColumn(which);
-							mygridview.setNumColumns(wholesheet.getColumns() + EditCellAdapter.EXTRACOLUMNS);
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 							setGridWidth();
 						}
 
@@ -184,11 +243,13 @@ public class EditViewActivity extends Activity {
 
 						}
 					});
-			builder.setPositiveButton("插在末尾", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton("插在末尾",
+					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertColumn();
-							mygridview.setNumColumns(wholesheet.getColumns() + EditCellAdapter.EXTRACOLUMNS);
+							mygridview.setNumColumns(wholesheet.getColumns()
+									+ EditCellAdapter.EXTRACOLUMNS);
 							setGridWidth();
 						}
 					});
@@ -217,10 +278,6 @@ public class EditViewActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void saveWholeSheet() {
-
 	}
 
 	public void gotoObserveMode() {

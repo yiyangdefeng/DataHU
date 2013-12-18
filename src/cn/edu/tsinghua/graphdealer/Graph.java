@@ -1,4 +1,4 @@
-package graphdealer;
+package cn.edu.tsinghua.graphdealer;
 
 public class Graph {
 	protected String title;

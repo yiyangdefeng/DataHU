@@ -1,4 +1,4 @@
-package datadealer;
+package cn.edu.tsinghua.datadealer;
 
 public class ColumnData {
 	protected String dataname;

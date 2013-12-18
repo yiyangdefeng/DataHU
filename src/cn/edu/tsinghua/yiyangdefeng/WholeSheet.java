@@ -26,6 +26,32 @@ public class WholeSheet {
 		graphtitle = "NewGraph";
 
 	}
+	
+	public WholeSheet(int columns,int rows) {
+		this.columns = columns;
+		this.rows = rows;
+		width = 200;
+		columndata = new ArrayList<Column>();
+		for (int i = 0; i < columns; i++) {
+			columndata.add(new Column(rows, width));
+		}
+		height = 60;
+		name = "NewSheet";
+		graphtitle = "NewGraph";
+	}
+	
+	public WholeSheet(int columns,int rows,float width,float height,String dataname,String graphtitle) {
+		this.columns = columns;
+		this.rows = rows;
+		this.width = width;
+		columndata = new ArrayList<Column>();
+		for (int i = 0; i < columns; i++) {
+			columndata.add(new Column(rows, width));
+		}
+		this.height = height;
+		this.name = dataname;
+		this.graphtitle = graphtitle;
+	}
 
 	public float getWidth() {
 		return this.width;
@@ -96,8 +122,8 @@ public class WholeSheet {
 		return this.graphtitle;
 	}
 
-	public Column getColumn(int rownumber) {
-		return columndata.get(rownumber);
+	public Column getColumn(int columnnumber) {
+		return columndata.get(columnnumber);
 	}
 
 	// other functions
@@ -151,14 +177,14 @@ public class WholeSheet {
 	public void insertRow() {
 		//add to the last of the sheet
 		for(int i = 0;i < columns;i++) {
-			columndata.get(i).data.add(0l);
+			columndata.get(i).data.add(null);
 		}
 		rows = rows + 1;
 	}
 	
 	public void insertRow(int therowbefore) {
 		for (int i = 0;i < columns;i++) {
-			columndata.get(i).data.add(therowbefore, 0l);
+			columndata.get(i).data.add(therowbefore, null);
 		}
 		rows = rows + 1;
 	}
@@ -172,5 +198,9 @@ public class WholeSheet {
 	public void insertColumn(int thecolumnbefore) {
 		columndata.add(thecolumnbefore,new Column(rows,width));
 		columns = columns + 1;
+	}
+	
+	public void cleardata(int column,int row) {
+		columndata.get(column).data.set(row, null);
 	}
 }

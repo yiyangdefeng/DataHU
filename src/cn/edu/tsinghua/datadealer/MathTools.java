@@ -1,4 +1,4 @@
-package datadealer;
+package cn.edu.tsinghua.datadealer;
 import java.math.*;
 
 public class MathTools {

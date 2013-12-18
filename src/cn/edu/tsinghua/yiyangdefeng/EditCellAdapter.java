@@ -19,20 +19,17 @@ public class EditCellAdapter extends BaseAdapter {
 	protected WholeSheet wholesheet;
 	private LayoutInflater li;
 	protected static final int EXTRACOLUMNS = 1;
-	protected static final int EXTRAROWS = 1;
-	protected int titlewidth;
-
-	public EditCellAdapter(Context context, WholeSheet wholesheet,
-			int titlewidth) {
+	protected static final int EXTRAROWS = 3;
+	
+	public EditCellAdapter(Context context, WholeSheet wholesheet) {
 		li = LayoutInflater.from(context);
 		this.wholesheet = wholesheet;
-		this.titlewidth = titlewidth;
+		
 	}
 
 	public EditCellAdapter(Context context) {
 		li = LayoutInflater.from(context);
 		wholesheet = new WholeSheet();
-		titlewidth = 200;
 	}
 
 	@Override
@@ -70,9 +67,9 @@ public class EditCellAdapter extends BaseAdapter {
 		et = (EditText) convertView.findViewById(R.id.edittext);
 		et.setTextSize(TypedValue.COMPLEX_UNIT_PX, 25);
 		et.setHeight((int) wholesheet.getHeight());
+		et.setWidth((int)wholesheet.getWidth());
 		et.setTextColor(Color.BLACK);
 		if (column == 0) {
-			et.setWidth(titlewidth);
 			et.setBackgroundColor(Color.GRAY);
 			et.setClickable(false);
 			et.setFocusable(false);
@@ -80,24 +77,61 @@ public class EditCellAdapter extends BaseAdapter {
 			et.setGravity(Gravity.CENTER);
 			if (row == 0) {
 				et.setText("");
+			} else if (row == 1) {
+				et.setText("变量说明");
+			} else if (row == 2) {
+				et.setText("单位");
 			} else {
-				et.setText(String.valueOf(row));
+				et.setText(String.valueOf(row + 1 - EXTRAROWS));
 			}
-		} else if (row == 0) {
-			et.setClickable(false);
-			et.setFocusable(false);
-			et.setLongClickable(false);
+		} else if (row == 0 || row == 1 || row == 2 ) {
 			et.setBackgroundColor(Color.GRAY);
 			et.setGravity(Gravity.CENTER);
-			et.setWidth((int) (wholesheet.getColumn(column - EXTRACOLUMNS)
-					.getWidth()));
-			et.setText(CommonTools.ChangeNumberintoLetter(column));
+			switch (row) {
+			case 0:
+				et.setClickable(false);
+				et.setFocusable(false);
+				et.setLongClickable(false);
+				et.setText(CommonTools.ChangeNumberintoLetter(column + 1 - EXTRACOLUMNS));
+				break;
+			case 1:
+				et.setClickable(true);
+				et.setFocusable(true);
+				et.setText(wholesheet.getColumn(column - EXTRACOLUMNS)
+						.getNotes());
+				et.setOnFocusChangeListener(new OnFocusChangeListener() {
+					@Override
+					public void onFocusChange(View arg0, boolean hasfocus) {
+						if (!hasfocus) {
+							wholesheet.getColumn(column - EXTRACOLUMNS).setNotes(et.getText().toString());
+						}
+					}
+					
+				});
+				break;
+			case 2:
+				et.setClickable(true);
+				et.setFocusable(true);
+				et.setText(wholesheet.getColumn(column - EXTRACOLUMNS)
+						.getUnit());
+				et.setOnFocusChangeListener(new OnFocusChangeListener() {
+					@Override
+					public void onFocusChange(View arg0, boolean hasfocus) {
+						if (!hasfocus) {
+							wholesheet.getColumn(column - EXTRACOLUMNS).setUnit(et.getText().toString());
+						}
+					}
+				});
+				break;
+			}
 		} else {
 			et.setFocusable(true);
 			et.setClickable(true);
-			et.setWidth((int) (wholesheet.getColumn(column - EXTRACOLUMNS)
-					.getWidth()));
-			et.setBackgroundColor(Color.WHITE);
+			if (row % 2 == 0) {
+				et.setBackgroundColor(Color.WHITE);
+			} else {
+				et.setBackgroundColor(Color.rgb(200, 255, 255));
+			}
 			et.setGravity(Gravity.FILL);
 			et.setText(row + "," + column);
 			// et.setText(String.valueOf(wholesheet.columndata.get(column -
@@ -136,9 +170,11 @@ public class EditCellAdapter extends BaseAdapter {
 										// throw a new warning dialog to remind
 										// the error input
 										// TODO Auto-generated method stub
-										et.setText("0");
-										setItem(column - EXTRACOLUMNS, row
-												- EXTRAROWS, 0l);
+										et.setText("");
+										wholesheet
+												.cleardata(column
+														- EXTRACOLUMNS, row
+														- EXTRAROWS);
 									}
 
 								});
@@ -148,23 +184,6 @@ public class EditCellAdapter extends BaseAdapter {
 
 				}
 			});
-			/*
-			 * et.addTextChangedListener(new TextWatcher() {
-			 * 
-			 * @Override public void afterTextChanged(Editable editable) {
-			 * Log.e("test",editable.toString()); );
-			 * 
-			 * 
-			 * } }
-			 * 
-			 * @Override public void beforeTextChanged(CharSequence arg0, int
-			 * arg1, int arg2, int arg3) { }
-			 * 
-			 * @Override public void onTextChanged(CharSequence s, int start,
-			 * int end, int after) {
-			 * 
-			 * } });
-			 */
 		}
 		et.refreshDrawableState();
 

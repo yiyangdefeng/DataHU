@@ -1,4 +1,4 @@
-package graphdealer;
+package cn.edu.tsinghua.graphdealer;
 
 public abstract class FittingTools {
 	double[] x,y,yfit;

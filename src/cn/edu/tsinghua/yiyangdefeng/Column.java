@@ -18,7 +18,7 @@ public class Column {
 		notes = "";
 		vt = VarType.X;
 		for (int i = 0; i < rows; i++) {
-			data.add(0l);
+			data.add(null);
 		}
 	}
 	
@@ -28,7 +28,7 @@ public class Column {
 		}
 		if(rows > this.rows) {
 			for (int i = this.rows; i < rows; i++) {
-				data.add(0l);
+				data.add(null);
 			}
 		}
 		
@@ -77,6 +77,18 @@ public class Column {
 	
 	public String getUnit() {
 		return this.unit;
+	}
+	
+	public String getType() {
+		if (vt == VarType.X) {
+			return "X";
+		}
+		if (vt == VarType.Y) {
+			return "Y";
+		}
+		else {
+			return "unkonwn";
+		}
 	}
 }
 
