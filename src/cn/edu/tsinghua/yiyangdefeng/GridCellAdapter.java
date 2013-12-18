@@ -40,10 +40,22 @@ public class GridCellAdapter extends BaseAdapter {
 		return position;
 	}
 
+	static java.util.Map<Integer,Boolean> G = null;
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final int row = getRow(position);
 		final int column = getColumn(position);
+		final int _pos = position;
+		if (G == null) {
+			G = new java.util.HashMap<Integer, Boolean>();
+		}
+		if (G.get(position) != null) {
+			if (convertView == null) {
+				throw new RuntimeException();
+			}
+		} else {
+			G.put(position, true);
+		}
 		if(!(column != 0 && row == 3)) {
 			TextView tv;
 			if (convertView == null) {
@@ -58,7 +70,7 @@ public class GridCellAdapter extends BaseAdapter {
 			tv.setTextColor(Color.BLACK);
 			if (column == 0) {
 				tv.setGravity(Gravity.CENTER);
-				tv.setBackgroundColor(Color.GRAY);
+				tv.setBackgroundColor(Color.rgb(225,225,225));
 				if (row == 0) {
 					tv.setText("");
 				} else if (row == 1) {
@@ -72,7 +84,7 @@ public class GridCellAdapter extends BaseAdapter {
 				}
 			} else if (row == 0 || row == 1 || row == 2 || row == 3) {
 				tv.setGravity(Gravity.LEFT);
-				tv.setBackgroundColor(Color.GRAY);
+				tv.setBackgroundColor(Color.rgb(225,225,225));
 				tv.setGravity(Gravity.CENTER);
 				switch (row) {
 				case 0:
@@ -95,7 +107,7 @@ public class GridCellAdapter extends BaseAdapter {
 				else {
 					tv.setBackgroundColor(Color.WHITE);
 				}
-				tv.setText(row + "," + column);
+				tv.setText(getRow(position) + "," + getColumn(position));
 			}
 			tv.refreshDrawableState();
 		}
@@ -134,12 +146,13 @@ public class GridCellAdapter extends BaseAdapter {
 					tv.setWidth((int) wholesheet.getWidth());
 					tv.setTextColor(Color.BLACK);
 					tv.setGravity(Gravity.CENTER);
+					
 					switch (position) {
 					case 0:
-						tv.setText("X");
+						tv.setText("X," + _pos + "," + row + "," + column);
 						break;
 					case 1:
-						tv.setText("Y");
+						tv.setText("Y," + _pos + "," + row + "," + column);
 						break;
 					}
 					return convertView;

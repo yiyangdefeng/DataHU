@@ -20,11 +20,11 @@ public class EditCellAdapter extends BaseAdapter {
 	private LayoutInflater li;
 	protected static final int EXTRACOLUMNS = 1;
 	protected static final int EXTRAROWS = 3;
-	
+
 	public EditCellAdapter(Context context, WholeSheet wholesheet) {
 		li = LayoutInflater.from(context);
 		this.wholesheet = wholesheet;
-		
+
 	}
 
 	public EditCellAdapter(Context context) {
@@ -67,10 +67,10 @@ public class EditCellAdapter extends BaseAdapter {
 		et = (EditText) convertView.findViewById(R.id.edittext);
 		et.setTextSize(TypedValue.COMPLEX_UNIT_PX, 25);
 		et.setHeight((int) wholesheet.getHeight());
-		et.setWidth((int)wholesheet.getWidth());
+		et.setWidth((int) wholesheet.getWidth());
 		et.setTextColor(Color.BLACK);
 		if (column == 0) {
-			et.setBackgroundColor(Color.GRAY);
+			et.setBackgroundColor(Color.rgb(225,225,225));
 			et.setClickable(false);
 			et.setFocusable(false);
 			et.setLongClickable(false);
@@ -84,15 +84,16 @@ public class EditCellAdapter extends BaseAdapter {
 			} else {
 				et.setText(String.valueOf(row + 1 - EXTRAROWS));
 			}
-		} else if (row == 0 || row == 1 || row == 2 ) {
-			et.setBackgroundColor(Color.GRAY);
+		} else if (row == 0 || row == 1 || row == 2) {
+			et.setBackgroundColor(Color.rgb(225,225,225));
 			et.setGravity(Gravity.CENTER);
 			switch (row) {
 			case 0:
 				et.setClickable(false);
 				et.setFocusable(false);
 				et.setLongClickable(false);
-				et.setText(CommonTools.ChangeNumberintoLetter(column + 1 - EXTRACOLUMNS));
+				et.setText(CommonTools.ChangeNumberintoLetter(column + 1
+						- EXTRACOLUMNS));
 				break;
 			case 1:
 				et.setClickable(true);
@@ -103,10 +104,11 @@ public class EditCellAdapter extends BaseAdapter {
 					@Override
 					public void onFocusChange(View arg0, boolean hasfocus) {
 						if (!hasfocus) {
-							wholesheet.getColumn(column - EXTRACOLUMNS).setNotes(et.getText().toString());
+							wholesheet.getColumn(column - EXTRACOLUMNS)
+									.setNotes(et.getText().toString());
 						}
 					}
-					
+
 				});
 				break;
 			case 2:
@@ -118,7 +120,8 @@ public class EditCellAdapter extends BaseAdapter {
 					@Override
 					public void onFocusChange(View arg0, boolean hasfocus) {
 						if (!hasfocus) {
-							wholesheet.getColumn(column - EXTRACOLUMNS).setUnit(et.getText().toString());
+							wholesheet.getColumn(column - EXTRACOLUMNS)
+									.setUnit(et.getText().toString());
 						}
 					}
 				});
@@ -133,9 +136,13 @@ public class EditCellAdapter extends BaseAdapter {
 				et.setBackgroundColor(Color.rgb(200, 255, 255));
 			}
 			et.setGravity(Gravity.FILL);
-			et.setText(row + "," + column);
-			// et.setText(String.valueOf(wholesheet.columndata.get(column -
-			// EXTRACOLUMNS).getData(row - EXTRAROWS)));
+			if (wholesheet.columndata.get(column - EXTRACOLUMNS).getData(
+					row - EXTRAROWS) != null) {
+				et.setText(String.valueOf(wholesheet.columndata.get(
+						column - EXTRACOLUMNS).getData(row - EXTRAROWS)));
+			} else {
+				et.setText("");
+			}
 			et.setOnFocusChangeListener(new OnFocusChangeListener() {
 				@Override
 				public void onFocusChange(View view, boolean hasFocus) {

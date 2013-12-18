@@ -116,8 +116,9 @@ public class EditViewActivity extends Activity {
 				Toast toast = Toast.makeText(EditViewActivity.this,"保存文件" + filepath + "成功",Toast.LENGTH_LONG);
 				toast.show();
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
-				toast.show();
+				throw new RuntimeException(e);
+				//Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
+				//toast.show();
 			}
 			return true;
 		case OBSERVATIONMODE:
@@ -182,7 +183,7 @@ public class EditViewActivity extends Activity {
 			return true;
 		case CREATEROW:
 			builder = new AlertDialog.Builder(EditViewActivity.this);
-			builder.setTitle("请选择需要插入的位置的前一行，或者选择插在末尾");
+			builder.setTitle("请选择插入的位置的前一行，或者选择插在末尾");
 			currentrows = new String[wholesheet.getRows()];
 			for (int i = 0; i < wholesheet.getRows(); i++) {
 				currentrows[i] = String.valueOf(i + 1);
@@ -218,7 +219,7 @@ public class EditViewActivity extends Activity {
 			return true;
 		case CREATECOLUMN:
 			builder = new AlertDialog.Builder(EditViewActivity.this);
-			builder.setTitle("请选择需要插入的位置的前一列，或者选择插在末尾");
+			builder.setTitle("请选择插入的位置的前一列，或者选择插在末尾");
 			currentcolumns = new String[wholesheet.getColumns()];
 			for (int i = 0; i < wholesheet.getColumns(); i++) {
 				currentcolumns[i] = String.valueOf(CommonTools

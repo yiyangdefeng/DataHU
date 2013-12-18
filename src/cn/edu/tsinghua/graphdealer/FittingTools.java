@@ -1,16 +1,23 @@
 package cn.edu.tsinghua.graphdealer;
 
+import java.text.NumberFormat;
+
+
 public abstract class FittingTools {
+	String outstr,outR;
 	double[] x,y,yfit;
 	int numofpara;
+	int numofnum;
 	double[] parameters;
 	int frequencies=0;
 	boolean resulte=false;
+	boolean toofew=false;
 	double xaverage,yaverage;
 	double R=0;
 	double s=0;
 	double u=0;
 	double q=0;
+	public String type;
 	
 	public double average(double[] a){
 		double sum=0;
@@ -41,7 +48,7 @@ public abstract class FittingTools {
 		while(true){
 			double olds=s;
 			parameter();
-			if(x.length<numofpara || frequencies>200 || resulte){
+			if(toofew || frequencies>2000 || resulte){
 				break;
 			}
 			suqcalculator();
@@ -50,13 +57,28 @@ public abstract class FittingTools {
 				}
 		}
 		}
-	public void Out(){
+	public void fitting(){
 		resulte=false;
 		Mins();
 		if(resulte){
-			System.out.println("Successful!.");
+			outstr="Successful!.";
 		}else{
-			System.out.println("Not successful!\n1.The Data is too few to Fitting.\n2.No convergence.\n3.Others.");
+			fittingfailed();
+		}
+	}
+	public String doutoString(double num){
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(numofnum);
+		return nf.format(num);
+	}
+	public void fittingfailed(){
+		outstr="Not successed!";
+		if(toofew){
+			outR="The Data is too few to Fitting.";
+		}else if(frequencies>200){
+			outR="No convergence.";
+		}else{
+			outR="Others.";
 		}
 	}
 	}

@@ -63,7 +63,7 @@ public class Column {
 		return width;
 	}
 	
-	public long getData(int row) {
+	public Long getData(int row) {
 		return data.get(row);
 	}
 	

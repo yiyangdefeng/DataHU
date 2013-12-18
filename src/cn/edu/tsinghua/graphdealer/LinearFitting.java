@@ -1,16 +1,15 @@
 package cn.edu.tsinghua.graphdealer;
 
+
 public class LinearFitting extends PolynomialFitting{
-	String type;
-	String str;
 	
 	public LinearFitting(double[] inx, double[] iny) {
-			super(inx,iny);
+			super(inx,iny,2);
 	}
 	@Override
 	public void parameter(){
 		//System.out.println("parameter");
-		frequencies=frequencies+1;
+		if(x.length>=numofpara){
 		double xave=average(x);
 		double yave=average(y);
 		double sxx=0,sxy=0;
@@ -20,6 +19,10 @@ public class LinearFitting extends PolynomialFitting{
 		}
 		parameters[0]=sxy/sxx;
 		parameters[1]=yave-parameters[0]*xave;
+		}else{
+			toofew=true;
+			resulte=false;
+		}	
 		//System.out.println("parameter Successful");
 		}
 	}

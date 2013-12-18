@@ -8,5 +8,46 @@
     <string name="content">内容</string>
     <string name="something">一些事</string>
     <string name="monosheet">单元格</string>
+       
+    <string name="menu_save">图像保存</string>
+    <string name="menu_setting">格式设置</string>
+     <string name="menusetxy">坐标轴标签</string>
+      <string name="menusetfigure">图像样式</string>
+    
+    
+    <string name="menu_delete">剔除异常数据</string>
+    <string name="menu_fun">线性多项式</string>
+    <string name="menu_function">拟合函数</string>
+    <string name="menunofit">清除拟合结果</string>
+    <string name="menuyx">y=ax+b</string>
+    <string name="menuyfunx">n次多项式</string>
+    <string name="menu_ln">对数线性</string>
+    <string name="menuylnx">y=aln(x)+b</string>
+    <string name="menulnyx">ln(y)=ax+b</string>
+    <string name="menulnylnx">ln(y)=aln(x)+b</string>
+    <string name="menu_explog">指数与幂函数</string>
+    <string name="menuyabx">y=ab^x+c</string>
+    <string name="menuyaxb">y=ax^b+c</string>
+    
+    <string name="numofnum">请输入大于0的整数</string>
+    <string name="smoothline">平滑</string>
+    <string name="brokenline">折线</string>
+    <string name="noline">无</string>
+    <string name="showy">横向</string>
+    <string name="showx">纵向</string>
+    <string name="showmain">主要</string>
+    <string name="showdetail">细致</string>
+    <string name="yesshow">是</string>
+    <string name="noshow">否</string>
+    <string name="xytitle">物理量含义和单位</string>
+    <string name="setconfirm">确定</string>
+    <string name="setcancel">取消</string>
+    <string name="yornshow">显示网格</string>
+    <string name="showline">网格样式</string>
+    <string name="linear">连接线样式</string>
+    <string name="numofnumtxt">小数显示位数</string>
+    <string name="xtitletxt">x轴标签</string>
+    <string name="ytitletxt">y轴标签</string>
+  
 
 </resources>

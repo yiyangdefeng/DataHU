@@ -1,13 +1,14 @@
 package cn.edu.tsinghua.graphdealer;
 
+
 public class PolynomialFitting extends FittingTools{
 
-	public PolynomialFitting(double[] inx,double[] iny,int num){
+	public PolynomialFitting(double[] inx,double[] iny,int numofpara){
 		x=inx;
 		y=iny;
 		yfit=new double[x.length];
-		numofpara=num;
-		parameters=new double[num];
+		this.numofpara=numofpara;
+		parameters=new double[numofpara];
 	}
 	public PolynomialFitting(double[] inx,double[] iny){
 		this(inx,iny,2);
@@ -16,30 +17,30 @@ public class PolynomialFitting extends FittingTools{
 	@Override
 	public void parameter(){
 		//System.out.println("parameter");
-		frequencies=frequencies+1;
-		double[][] A=new double[numofpara][2*numofpara];
-		double[] B=new double[numofpara];
-		for(int i=0;i<numofpara;i++){
-			for(int j=0;j<numofpara;j++){
-				double sum1=0;
-				for(int k=0;k<x.length;k++){
-					sum1+=Math.pow(x[k],numofpara-1+i-j);
-					}
-				A[i][j]=sum1;
-				if(i==j){
-					A[i][j+numofpara]=1;
+		if(x.length>=numofpara){
+			frequencies=frequencies+1;
+			double[][] A=new double[numofpara][2*numofpara];
+			double[] B=new double[numofpara];
+			for(int i=0;i<numofpara;i++){
+				for(int j=0;j<numofpara;j++){
+					double sum1=0;
+					for(int k=0;k<x.length;k++){
+						sum1+=Math.pow(x[k],numofpara-1+i-j);
+						}
+					A[i][j]=sum1;
+					if(i==j){
+						A[i][j+numofpara]=1;
 					}else{
 						A[i][j+numofpara]=0;
 						}
+					}
+				double sum2=0;
+				for(int k=0;k<x.length;k++){
+					sum2+=y[k]*Math.pow(x[k],i);
+					}
+				B[i]=sum2;
 				}
-			double sum2=0;
-			for(int k=0;k<x.length;k++){
-				sum2+=y[k]*Math.pow(x[k],i);
-				}
-			B[i]=sum2;
-			}
-		
-	
+				
 		for(int o=0;o<numofpara;o++){
 			if(A[o][o]!=1){
 				double bs = A[o][o];
@@ -66,6 +67,11 @@ public class PolynomialFitting extends FittingTools{
 				}
 			parameters[m]=sum3;
 			}
+		}else{
+			toofew=true;
+			resulte=false;
+		}
+		
 		//System.out.println("parameter Successful");
 		}
 	
@@ -81,20 +87,44 @@ public class PolynomialFitting extends FittingTools{
 	//	System.out.println("function successful");
 		return y;
 		}
-	public void Out(){
+	public void fitting(){
 		resulte=false;
 		Mins();
 		if(resulte){
-			System.out.println();
-			System.out.printf("y = ");
+			outstr="y =";
 			for(int i=0;i<(numofpara-2);i++){
-				System.out.printf("%.5f x"+(numofpara-1-i)+" + ",parameters[i]);
+				if(Math.abs(parameters[i])<1e-6){
+					
+				}else{
+					if(parameters[i+1]>1e-6){
+						outstr=outstr+" "+doutoString(parameters[i])+"*x^"+(numofpara-1-i)+" +";
+						}else{
+							outstr=outstr+" "+doutoString(parameters[i])+"*x^"+(numofpara-1-i);
+							}
+					}
+				}
+			if(Math.abs(parameters[numofpara-2])<1e-6){
+				if(Math.abs(parameters[numofpara-1])<1e-6){
+					if(outstr.equals("y =")){
+						outstr="y = 0";
+					}
+				}else if(parameters[numofpara-1]<-1e-6){
+					outstr=outstr+" - "+doutoString(Math.abs(parameters[numofpara-1]));
+				}else{
+					outstr=outstr+" + "+doutoString(parameters[numofpara-1]);
+				}
+			}else{
+				if(Math.abs(parameters[numofpara-1])<1e-6){
+					outstr=outstr+" "+doutoString(parameters[numofpara-2])+"*x";
+				}else if(parameters[numofpara-1]<-1e-6){
+					outstr=outstr+" "+doutoString(parameters[numofpara-2])+"*x - "+doutoString(Math.abs(parameters[numofpara-1]));
+				}else{
+					outstr=outstr+" "+doutoString(parameters[numofpara-2])+"*x + "+doutoString(parameters[numofpara-1]);
+					}
 			}
-			System.out.printf("%.5f x + %.5f ",parameters[numofpara-2],parameters[numofpara-1]);
-			System.out.printf("  R2 = %.8f",R);
-			System.out.println();
+			outR="R^2 = "+doutoString(R);
 		}else{
-			System.out.println("Not successful!\n1.The Data is too few to Fitting.\n2.No convergence.\n3.Others.");
+			fittingfailed();
 		}
 	}
 }
