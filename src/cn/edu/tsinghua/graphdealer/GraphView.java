@@ -49,7 +49,7 @@ public class GraphView extends View{
 	        this.setYkey(y);
 	        this.xstr=xstr;
 	        this.ystr=ystr;
-	        act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE); 
+	        act.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); 
 	    }
 
 	public GraphView() {

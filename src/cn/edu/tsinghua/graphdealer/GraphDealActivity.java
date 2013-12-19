@@ -8,31 +8,37 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cn.edu.tsinghua.graphdealer.GraphView.Mstyle;
+import cn.edu.tsinghua.yiyangdefeng.MainActivity;
 import cn.edu.tsinghua.yiyangdefeng.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 @SuppressLint({ "SimpleDateFormat", "NewApi" })
-public class Graphdeal extends Activity implements OnCheckedChangeListener {
+public class GraphDealActivity extends Activity implements
+		OnCheckedChangeListener {
 	protected static final int MENU_SAVE = Menu.FIRST;
 	protected static final int MENU_SET_FIGURE = Menu.FIRST + 1;
 	protected static final int MENU_SET_XY = Menu.FIRST + 2;
@@ -45,8 +51,7 @@ public class Graphdeal extends Activity implements OnCheckedChangeListener {
 	protected static final int MENU_LNYLNX = Menu.FIRST + 9;
 	protected static final int MENU_YABX = Menu.FIRST + 10;
 	protected static final int MENU_YAXB = Menu.FIRST + 11;
-	
-	
+
 	GraphView figure;
 	int inputn;
 	double[] x, y, dx, dy;
@@ -64,6 +69,9 @@ public class Graphdeal extends Activity implements OnCheckedChangeListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.graphview);
+		LinearLayout ll = (LinearLayout) findViewById(R.id.graphlinearlayout); 
 		x = new double[16];
 		y = new double[x.length];
 		isdelete = new boolean[x.length];
@@ -76,16 +84,16 @@ public class Graphdeal extends Activity implements OnCheckedChangeListener {
 		figure = new GraphView(this, x, y, "x", "y");
 		figure.setBackgroundColor(Color.WHITE);
 		figure.setMstyle(Mstyle.Line);
-		setContentView(figure);
+		ll.addView(figure);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MENU_SAVE,Menu.NONE,"´æ´¢Í¼Ïñ");
-		menu.add(Menu.NONE, MENU_SET_FIGURE,Menu.NONE,"Í¼ÏñÉèÖÃ");
-		menu.add(Menu.NONE, MENU_SET_XY,Menu.NONE,"ÉèÖÃ×ø±ê");
-		menu.add(Menu.NONE, MENU_DELETE,Menu.NONE,"É¾³ýÍ¼Ïñ");
+		menu.add(Menu.NONE, MENU_SAVE, Menu.NONE, "´æ´¢Í¼Ïñ");
+		menu.add(Menu.NONE, MENU_SET_FIGURE, Menu.NONE, "Í¼ÏñÉèÖÃ");
+		menu.add(Menu.NONE, MENU_SET_XY, Menu.NONE, "ÉèÖÃ×ø±ê");
+		menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "É¾³ýÍ¼Ïñ");
 		return true;
 	}
 
@@ -390,6 +398,34 @@ public class Graphdeal extends Activity implements OnCheckedChangeListener {
 			}
 
 		}
+	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Intent intent = new Intent();
+			intent.setClass(GraphDealActivity.this, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void onRestart() {
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); 
+		super.onRestart();
+	}
+
+	@Override
+	protected void onResume() {
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); 
+		super.onResume();
+	}
+
+	@Override
+	protected void onStart() {
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE); 
+		super.onStart();
 	}
 }

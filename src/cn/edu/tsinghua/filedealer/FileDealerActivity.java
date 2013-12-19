@@ -4,39 +4,47 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.tsinghua.graphdealer.GraphDealActivity;
 import cn.edu.tsinghua.yiyangdefeng.EditViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.GridViewActivity;
+import cn.edu.tsinghua.yiyangdefeng.MainActivity;
 import cn.edu.tsinghua.yiyangdefeng.R;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 @SuppressLint("DefaultLocale")
-public class FileDealer extends ListActivity {
+public class FileDealerActivity extends Activity {
 	protected List<String> items = null;
 	protected List<String> paths = null;
-	private String rootpath = "/";
-	protected File file = Environment.getExternalStorageDirectory();
+	protected String rootpath = Environment.getExternalStorageDirectory().getName();
 	protected TextView pathtextview;
 	protected EditText et;
+	protected ListView lv;
 
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.fileview);
 		pathtextview = (TextView) findViewById(R.id.filetextview);
+		lv = (ListView)findViewById(R.id.list);
 		getFileDir(rootpath);
 	}
 
@@ -57,23 +65,26 @@ public class FileDealer extends ListActivity {
 			items.add(tempfile.getName());
 			paths.add(tempfile.getPath());
 		}
-		setListAdapter(new FileAdapter(this, items, paths));
-	}
+		lv.setAdapter(new FileAdapter(this, items, paths));
+		lv.setOnItemClickListener(new OnItemClickListener() {
 
-	@SuppressLint("DefaultLocale")
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		File selectedfile = new File(paths.get(position));
-		if (selectedfile.isDirectory()) {
-			getFileDir(paths.get(position));
-		} else {
-			String filename = selectedfile.getName();
-			String type = filename.substring(filename.lastIndexOf(".") + 1,
-					filename.length()).toLowerCase();
-			if (type.equals("csv") || type.equals("txt")) {
-				fileHandler(selectedfile);
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long id) {
+				File selectedfile = new File(paths.get(position));
+				if (selectedfile.isDirectory()) {
+					getFileDir(paths.get(position));
+				} else {
+					String filename = selectedfile.getName();
+					String type = filename.substring(filename.lastIndexOf(".") + 1,
+							filename.length()).toLowerCase();
+					if (type.equals("csv") || type.equals("txt")) {
+						fileHandler(selectedfile);
+					}
+				}
 			}
-		}
+			
+		});
 	}
 
 	protected void fileHandler(final File selectedfile) {
@@ -84,12 +95,12 @@ public class FileDealer extends ListActivity {
 				Bundle bundle = new Bundle();
 				bundle.putString("FILENAME", selectedfile.getName());
 				if (which == 0) {
-					intent.setClass(FileDealer.this, EditViewActivity.class);
+					intent.setClass(FileDealerActivity.this, EditViewActivity.class);
 					startActivity(intent,bundle);
 					finish();
 				}
 				if (which == 1) {
-					intent.setClass(FileDealer.this, GridViewActivity.class);
+					intent.setClass(FileDealerActivity.this, GridViewActivity.class);
 					startActivity(intent,bundle);
 					finish();
 				}
@@ -105,6 +116,17 @@ public class FileDealer extends ListActivity {
 			}
 		});
 		builder.show();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Intent intent = new Intent();
+			intent.setClass(FileDealerActivity.this, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import cn.edu.tsinghua.graphdealer.GraphDealActivity;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,8 +15,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -34,6 +38,7 @@ public class EditViewActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dm = new DataManager();		
 		setContentView(R.layout.data_editview);
 		mygridview = new MyGridView(this);
@@ -257,7 +262,11 @@ public class EditViewActivity extends Activity {
 			builder.show();
 			return true;
 		case DRAW:
-			builder = new AlertDialog.Builder(EditViewActivity.this);
+			Intent intent = new Intent();
+			intent.setClass(EditViewActivity.this, GraphDealActivity.class);
+			startActivity(intent);
+			finish();
+			/*builder = new AlertDialog.Builder(EditViewActivity.this);
 			builder.setTitle("提示");
 			builder.setMessage("要想使用画图功能，需要首先退出数据编辑模式进入数据查看模式，是否执行？");
 			builder.setCancelable(true);
@@ -276,7 +285,7 @@ public class EditViewActivity extends Activity {
 						}
 					});
 			builder.show();
-			return true;
+			return true;*/
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -286,5 +295,16 @@ public class EditViewActivity extends Activity {
 		intent.setClass(EditViewActivity.this, GridViewActivity.class);
 		startActivity(intent);
 		finish();
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			Intent intent = new Intent();
+			intent.setClass(EditViewActivity.this, MainActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }
