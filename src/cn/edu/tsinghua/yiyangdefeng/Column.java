@@ -5,14 +5,14 @@ import java.util.List;
 
 public class Column {
 	protected float width;
-	protected List<Long> data;
+	protected List<Double> data;
 	protected String unit;
 	protected String notes;
 	protected VarType vt;
 	protected int rows;
 	
 	public Column(int rows, float width) {
-		data = new ArrayList<Long>();
+		data = new ArrayList<Double>();
 		this.width = width;
 		unit = "";
 		notes = "";
@@ -43,7 +43,7 @@ public class Column {
 		this.notes = notes;
 	}
 	
-	public void setData(long newdata,int row) {
+	public void setData(double newdata,int row) {
 		this.data.set(row,newdata);
 	}
 	
@@ -63,11 +63,11 @@ public class Column {
 		return width;
 	}
 	
-	public Long getData(int row) {
+	public Double getData(int row) {
 		return data.get(row);
 	}
 	
-	public List<Long> getAllData() {
+	public List<Double> getAllData() {
 		return data;
 	}
 		

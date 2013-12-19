@@ -14,11 +14,13 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -30,13 +32,12 @@ import android.widget.TextView;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 @SuppressLint("DefaultLocale")
-public class FileDealerActivity extends Activity {
+public class FileDealerActivity extends ListActivity {
 	protected List<String> items = null;
 	protected List<String> paths = null;
-	protected String rootpath = Environment.getExternalStorageDirectory().getName();
+	protected String rootpath = Environment.getExternalStorageDirectory()
+			.getName();
 	protected TextView pathtextview;
-	protected EditText et;
-	protected ListView lv;
 
 	@Override
 	protected void onCreate(Bundle bundle) {
@@ -44,7 +45,6 @@ public class FileDealerActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.fileview);
 		pathtextview = (TextView) findViewById(R.id.filetextview);
-		lv = (ListView)findViewById(R.id.list);
 		getFileDir(rootpath);
 	}
 
@@ -65,26 +65,30 @@ public class FileDealerActivity extends Activity {
 			items.add(tempfile.getName());
 			paths.add(tempfile.getPath());
 		}
-		lv.setAdapter(new FileAdapter(this, items, paths));
-		lv.setOnItemClickListener(new OnItemClickListener() {
+		items.add("test1.txt");
+		paths.add("test1path");
+		items.add("test2.csv");
+		paths.add("test2path");
+		items.add("test3.jpg");
+		paths.add("test3path");
+		FileAdapter fa = new FileAdapter(this, items, paths);
+		setListAdapter(fa);
+	}
 
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long id) {
-				File selectedfile = new File(paths.get(position));
-				if (selectedfile.isDirectory()) {
-					getFileDir(paths.get(position));
-				} else {
-					String filename = selectedfile.getName();
-					String type = filename.substring(filename.lastIndexOf(".") + 1,
-							filename.length()).toLowerCase();
-					if (type.equals("csv") || type.equals("txt")) {
-						fileHandler(selectedfile);
-					}
-				}
+	@Override
+	protected void onListItemClick(ListView l, View arg1,
+			int position, long id) {
+		File selectedfile = new File(paths.get(position));
+		if (selectedfile.isDirectory()) {
+			getFileDir(paths.get(position));
+		} else {
+			String filename = selectedfile.getName();
+			String type = filename.substring(filename.lastIndexOf(".") + 1,
+					filename.length()).toLowerCase();
+			if (type.equals("csv") || type.equals("txt")) {
+				fileHandler(selectedfile);
 			}
-			
-		});
+		}
 	}
 
 	protected void fileHandler(final File selectedfile) {
@@ -95,13 +99,15 @@ public class FileDealerActivity extends Activity {
 				Bundle bundle = new Bundle();
 				bundle.putString("FILENAME", selectedfile.getName());
 				if (which == 0) {
-					intent.setClass(FileDealerActivity.this, EditViewActivity.class);
-					startActivity(intent,bundle);
+					intent.setClass(FileDealerActivity.this,
+							EditViewActivity.class);
+					startActivity(intent, bundle);
 					finish();
 				}
 				if (which == 1) {
-					intent.setClass(FileDealerActivity.this, GridViewActivity.class);
-					startActivity(intent,bundle);
+					intent.setClass(FileDealerActivity.this,
+							GridViewActivity.class);
+					startActivity(intent, bundle);
 					finish();
 				}
 			}
@@ -117,7 +123,7 @@ public class FileDealerActivity extends Activity {
 		});
 		builder.show();
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {

@@ -46,11 +46,8 @@ public class FileAdapter extends BaseAdapter {
 		TextView tv;
 		if (convertView == null) {
 			convertView = li.inflate(R.layout.filecell,null);
-			tv = (TextView) convertView.findViewById(R.id.filecell);
 		}
-		else {
-			tv = (TextView)convertView.getTag();
-		}
+		tv = (TextView) convertView.findViewById(R.id.filecell);
 		File file = new File(paths.get(position).toString());
 		if(items.get(position).toString().equals("root")) {
 			tv.setText("根目录");
@@ -58,9 +55,10 @@ public class FileAdapter extends BaseAdapter {
 			tv.setText("上一级");
 		} else {
 			String filename = file.getName();
+			filename = items.get(position);
 			String type = filename.substring(filename.lastIndexOf(".")+1,filename.length()).toLowerCase();
 			if (type.equals("csv") || type.equals("txt")) {
-				tv.setText(file.getName());
+				tv.setText(filename);
 			}
 			else {
 				tv.setText("不支持的文件格式");

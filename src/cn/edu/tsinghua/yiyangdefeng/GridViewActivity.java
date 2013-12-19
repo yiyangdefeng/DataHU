@@ -1,5 +1,6 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 
+@SuppressLint("HandlerLeak")
 public class GridViewActivity extends Activity {
 	protected WholeSheet wholesheet;
 	protected GridView mygridview;

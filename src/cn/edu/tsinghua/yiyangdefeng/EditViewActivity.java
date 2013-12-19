@@ -19,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -26,13 +27,17 @@ public class EditViewActivity extends Activity {
 	protected WholeSheet wholesheet;
 	protected MyGridView mygridview;
 	protected int titlewidth;
+	EditCellAdapter eca;
 	protected final int SAVE = Menu.FIRST;
 	protected final int OBSERVATIONMODE = Menu.FIRST + 1;
 	protected final int ERASEROW = Menu.FIRST + 2;
 	protected final int ERASECOLUMN = Menu.FIRST + 3;
 	protected final int CREATEROW = Menu.FIRST + 4;
 	protected final int CREATECOLUMN = Menu.FIRST + 5;
-	protected final int DRAW = Menu.FIRST + 6;
+	protected final int CHANGEWIDTH = Menu.FIRST + 6;
+	protected final int CHANGEHEIGHT = Menu.FIRST + 7;
+	protected final int DRAW = Menu.FIRST + 8;
+	
 	protected DataManager dm;
 
 	@Override
@@ -55,8 +60,8 @@ public class EditViewActivity extends Activity {
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
-					wholesheet));
+			eca = new EditCellAdapter(getApplicationContext(),wholesheet);
+			mygridview.setAdapter(eca);
 			FrameLayout fm = (FrameLayout) this
 					.findViewById(R.id.edit_framelayout);
 			fm.addView(mygridview);
@@ -75,8 +80,7 @@ public class EditViewActivity extends Activity {
 						.findViewById(R.id.edit_framelayout);
 				fm.addView(mygridview);
 			} catch (IOException e) {
-				Toast toast = new Toast(this);
-				toast.setText("很抱歉，读取文件出错！");
+				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
 				toast.show();
 			}
 	}
@@ -100,6 +104,8 @@ public class EditViewActivity extends Activity {
 		menu.add(Menu.NONE, ERASECOLUMN, Menu.NONE, "删除列");
 		menu.add(Menu.NONE, CREATEROW, Menu.NONE, "插入行");
 		menu.add(Menu.NONE, CREATECOLUMN, Menu.NONE, "插入列");
+		menu.add(Menu.NONE, CHANGEWIDTH, Menu.NONE, "调整行宽");
+		menu.add(Menu.NONE, CHANGEHEIGHT, Menu.NONE, "调整列高");
 		menu.add(Menu.NONE, DRAW, Menu.NONE, "画图");
 		return true;
 	}
@@ -142,8 +148,7 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.eraseRow(which);
-							mygridview.setNumColumns(wholesheet.getColumns()
-									+ EditCellAdapter.EXTRACOLUMNS);
+							eca.notifyDataSetChanged();
 						}
 
 					});
@@ -198,8 +203,7 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertRow(which);
-							mygridview.setNumColumns(wholesheet.getColumns()
-									+ EditCellAdapter.EXTRACOLUMNS);
+							eca.notifyDataSetChanged();
 						}
 
 					});
@@ -216,8 +220,7 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							wholesheet.insertRow();
-							mygridview.setNumColumns(wholesheet.getColumns()
-									+ EditCellAdapter.EXTRACOLUMNS);
+							eca.notifyDataSetChanged();
 						}
 					});
 			builder.show();
@@ -262,11 +265,7 @@ public class EditViewActivity extends Activity {
 			builder.show();
 			return true;
 		case DRAW:
-			Intent intent = new Intent();
-			intent.setClass(EditViewActivity.this, GraphDealActivity.class);
-			startActivity(intent);
-			finish();
-			/*builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder = new AlertDialog.Builder(EditViewActivity.this);
 			builder.setTitle("提示");
 			builder.setMessage("要想使用画图功能，需要首先退出数据编辑模式进入数据查看模式，是否执行？");
 			builder.setCancelable(true);
@@ -285,7 +284,82 @@ public class EditViewActivity extends Activity {
 						}
 					});
 			builder.show();
-			return true;*/
+			return true;
+		case CHANGEWIDTH:
+			builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder.setTitle("请输入行宽，以像素为单位");
+			final EditText et = new EditText(EditViewActivity.this);
+			et.setText(String.valueOf(wholesheet.getWidth()));
+			et.setFocusable(true);
+			et.setClickable(true);
+			builder.setView(et);
+			builder.setCancelable(true);
+			builder.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							try {
+							float newwidth = Float.parseFloat(et.getText().toString());
+								if(newwidth > 0) {
+									wholesheet.setWidth(newwidth);
+									setGridWidth();
+									eca.notifyDataSetChanged();
+								}
+							}
+							catch (NumberFormatException nfe) {
+								Toast toast = Toast.makeText(EditViewActivity.this, "您的输入有误", Toast.LENGTH_SHORT);
+								toast.show();
+							}
+							
+							
+						}
+					});
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.show();
+			return true;
+		case CHANGEHEIGHT:
+			builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder.setTitle("请输列高，以像素为单位");
+			final EditText et2 = new EditText(EditViewActivity.this);
+			et2.setText(String.valueOf(wholesheet.getHeight()));
+			et2.setFocusable(true);
+			et2.setClickable(true);
+			builder.setView(et2);
+			builder.setCancelable(true);
+			builder.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							try {
+								float newheight = Float.parseFloat(et2.getText().toString());
+							if(newheight > 0) {
+								wholesheet.setHeight(newheight);
+								eca.notifyDataSetChanged();
+							}
+							}
+							catch (NumberFormatException nfe) {
+								Toast toast = Toast.makeText(EditViewActivity.this, "您的输入有误", Toast.LENGTH_SHORT);
+								toast.show();
+							}
+							
+							
+						}
+					});
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.show();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

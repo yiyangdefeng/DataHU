@@ -2,6 +2,7 @@ package cn.edu.tsinghua.yiyangdefeng;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -38,7 +39,7 @@ public class EditCellAdapter extends BaseAdapter {
 				.getRows() + EXTRAROWS));
 	}
 
-	public void setItem(int column, int row, long newdata) {
+	public void setItem(int column, int row, double newdata) {
 		wholesheet.getColumn(column).data.set(row, newdata);
 	}
 
@@ -65,7 +66,7 @@ public class EditCellAdapter extends BaseAdapter {
 		final View finalConvertView = convertView;
 		final EditText et;
 		et = (EditText) convertView.findViewById(R.id.edittext);
-		et.setTextSize(TypedValue.COMPLEX_UNIT_PX, 25);
+		et.setTextSize(TypedValue.COMPLEX_UNIT_PX, wholesheet.getHeight() / 2);
 		et.setHeight((int) wholesheet.getHeight());
 		et.setWidth((int) wholesheet.getWidth());
 		et.setTextColor(Color.BLACK);
@@ -149,18 +150,20 @@ public class EditCellAdapter extends BaseAdapter {
 					if (!hasFocus) {
 						if (et.getText().toString() != "") {
 							try {
-								final long newdata = (long) Float.parseFloat(et
+								final double newdata = (double) Float.parseFloat(et
 										.getText().toString()
 										.replaceAll("\\s", ""));
 								setItem(column - EXTRACOLUMNS, row - EXTRAROWS,
 										newdata);
-								if (!Long.toString(newdata).equals(
+								if (!Double.toString(newdata).equals(
 										et.getText().toString())) {
 									finalConvertView.post(new Runnable() {
 										@Override
 										public void run() {
 											// TODO Auto-generated method stub
-											et.setText(Long.toString(newdata));
+											DecimalFormat df = new DecimalFormat();
+											df.setMaximumFractionDigits(3);
+											et.setText(df.format(newdata));
 										}
 
 									});

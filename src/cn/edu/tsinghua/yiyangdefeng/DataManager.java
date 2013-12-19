@@ -62,7 +62,7 @@ public class DataManager {
 		while ((line = br.readLine()) != null) {
 			st = new StringTokenizer(line,",");
 			for (int i = 0; i < columns;i++) {
-				long data = Long.parseLong(st.nextToken());
+				double data = Double.parseDouble(st.nextToken());
 				wholesheet.getColumn(i).data.set(currentrow, data);
 			}
 			currentrow++;
