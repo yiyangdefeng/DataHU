@@ -2,6 +2,10 @@ package cn.edu.tsinghua.yiyangdefeng;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.edu.tsinghua.graphdealer.GraphDealActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -55,6 +59,8 @@ public class GridViewActivity extends Activity {
 	protected String first;
 	protected String second;
 	protected boolean firstiscolumn;
+	protected int drawX;
+	protected int drawY;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -261,14 +267,11 @@ public class GridViewActivity extends Activity {
 						@Override
 						public void onItemSelected(AdapterView<?> arg0,
 								View arg1, int position, long arg3) {
-							// TODO Auto-generated method stub
 							tempcolumn = position;
 						}
 
 						@Override
 						public void onNothingSelected(AdapterView<?> arg0) {
-							// TODO Auto-generated method stub
-
 						}
 					});
 
@@ -352,11 +355,11 @@ public class GridViewActivity extends Activity {
 
 			builder = new AlertDialog.Builder(GridViewActivity.this);
 			builder.setTitle("请输入进行运算的列，或者输入一个数：");
-			String[] currentrows = new String[wholesheet.getColumns()];
+			String[] currentcolumns = new String[wholesheet.getColumns()];
 			for (int i = 0; i < wholesheet.getColumns(); i++) {
-				currentrows[i] = CommonTools.ChangeNumberintoLetter(i + 1);
+				currentcolumns[i] = CommonTools.ChangeNumberintoLetter(i + 1);
 			}
-			builder.setItems(currentrows,
+			builder.setItems(currentcolumns,
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -384,36 +387,36 @@ public class GridViewActivity extends Activity {
 					});
 			builder.show();
 			return true;
-			/*
-			 * case CREATECOLUMN: builder = new
-			 * AlertDialog.Builder(EditViewActivity.this);
-			 * builder.setTitle("请选择插入的位置的前一列，或者选择插在末尾"); currentcolumns = new
-			 * String[wholesheet.getColumns()]; for (int i = 0; i <
-			 * wholesheet.getColumns(); i++) { currentcolumns[i] =
-			 * String.valueOf(CommonTools .ChangeNumberintoLetter(i + 1)); }
-			 * builder.setItems(currentcolumns, new
-			 * DialogInterface.OnClickListener() {
-			 * 
-			 * @Override public void onClick(DialogInterface dialog, int which)
-			 * { wholesheet.insertColumn(which);
-			 * mygridview.setNumColumns(wholesheet.getColumns() +
-			 * EditCellAdapter.EXTRACOLUMNS); setGridWidth(); }
-			 * 
-			 * }); builder.setCancelable(true); builder.setNegativeButton("取消",
-			 * new DialogInterface.OnClickListener() {
-			 * 
-			 * @Override public void onClick(DialogInterface dialog, int which)
-			 * {
-			 * 
-			 * } }); builder.setPositiveButton("插在末尾", new
-			 * DialogInterface.OnClickListener() {
-			 * 
-			 * @Override public void onClick(DialogInterface dialog, int which)
-			 * { wholesheet.insertColumn();
-			 * mygridview.setNumColumns(wholesheet.getColumns() +
-			 * EditCellAdapter.EXTRACOLUMNS); setGridWidth(); } });
-			 * builder.show(); return true;
-			 */
+		case DRAW:
+			builder = new AlertDialog.Builder(GridViewActivity.this);
+			builder.setTitle("请选择X中的一列作为自变量：");
+			List<String> currentxcolumnlist = new ArrayList<String>();
+			final List<Integer> currentxcolumnnumber = new ArrayList<Integer>();
+			for (int i = 0; i < wholesheet.getColumns(); i++) {
+				if (wholesheet.getColumn(i).getType().equals("X")) {
+					currentxcolumnlist.add(CommonTools.ChangeNumberintoLetter(i + 1));
+					currentxcolumnnumber.add(i);
+				}
+			}
+			builder.setItems((String[])currentxcolumnlist.toArray(),
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							drawX = currentxcolumnnumber.get(which);						
+							openychoice();
+						}
+
+					});
+			builder.setCancelable(true);
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.show();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -429,6 +432,57 @@ public class GridViewActivity extends Activity {
 		intent.setClass(GridViewActivity.this, EditViewActivity.class);
 		startActivity(intent);
 		finish();
+	}
+	
+	public void gotoDrawMode() {
+		Intent intent = new Intent();
+		intent.setClass(GridViewActivity.this, GraphDealActivity.class);
+		List<Double> xvalues = wholesheet.getColumn(drawX).getAllData();
+		List<Double> yvalues = wholesheet.getColumn(drawY).getAllData();
+		String xunit = wholesheet.getColumn(drawX).getUnit();
+		String xname = wholesheet.getColumn(drawX).getNotes();
+		String yunit = wholesheet.getColumn(drawY).getUnit();
+		String yname = wholesheet.getColumn(drawY).getNotes();
+		Session session = Session.getSession();
+		session.put("xvalues", xvalues);
+		session.put("yvalues", yvalues);
+		session.put("xunit", xunit);
+		session.put("xname", xname);
+		session.put("yunit", yunit);
+		session.put("yname", yname);
+		startActivity(intent);
+		finish();
+	}
+	
+	public void openychoice() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(GridViewActivity.this);
+		builder.setTitle("请选择Y中的一列作为因变量：");
+		List<String> currentycolumnlist = new ArrayList<String>();
+		final List<Integer> currentycolumnnumber = new ArrayList<Integer>();
+		for (int i = 0; i < wholesheet.getColumns(); i++) {
+			if (wholesheet.getColumn(i).getType().equals("Y")) {
+				currentycolumnlist.add(CommonTools.ChangeNumberintoLetter(i + 1));
+				currentycolumnnumber.add(i);
+			}
+		}
+		builder.setItems((String[])currentycolumnlist.toArray(),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						drawY = currentycolumnnumber.get(which);						
+						gotoDrawMode();
+					}
+
+				});
+		builder.setCancelable(true);
+		builder.setNegativeButton("取消",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+		builder.show();
 	}
 
 	// operators contains "+" "-" "*" "/" "sin" single,"cos" single,"tan"
@@ -624,11 +678,11 @@ public class GridViewActivity extends Activity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(
 				GridViewActivity.this);
 		builder.setTitle("请输入运算的第二列，或者输入数字");
-		String[] currentrows = new String[wholesheet.getColumns()];
+		String[] currentcolumns = new String[wholesheet.getColumns()];
 		for (int i = 0; i < wholesheet.getColumns(); i++) {
-			currentrows[i] = CommonTools.ChangeNumberintoLetter(i + 1);
+			currentcolumns[i] = CommonTools.ChangeNumberintoLetter(i + 1);
 		}
-		builder.setItems(currentrows, new DialogInterface.OnClickListener() {
+		builder.setItems(currentcolumns, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (firstiscolumn) {
