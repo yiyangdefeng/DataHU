@@ -13,14 +13,14 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class GridCellAdapter extends BaseAdapter {
-	protected final int EXTRACOLUMNS = 1;
-	protected final int EXTRAROWS = 4;
-	private LayoutInflater mInflater;
+	protected static final int EXTRACOLUMNS = 1;
+	protected static final int EXTRAROWS = 4;
+	private LayoutInflater li;
 	protected WholeSheet wholesheet;
 	protected int digit;
 
 	public GridCellAdapter(Context context, WholeSheet wholesheet, int digit) {
-		mInflater = LayoutInflater.from(context);
+		li = LayoutInflater.from(context);
 		this.wholesheet = wholesheet;
 		this.digit = digit;
 	}
@@ -44,12 +44,13 @@ public class GridCellAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+
+		if (convertView == null) {
+			convertView = li.inflate(R.layout.textcell, null);
+		}
 		final int row = getRow(position);
 		final int column = getColumn(position);
-		TextView tv;
-		if (convertView == null) {
-			convertView = mInflater.inflate(R.layout.textcell, null);
-		}
+		final TextView tv;
 
 		tv = (TextView) convertView.findViewById(R.id.textcell);
 		tv.setBackgroundColor(Color.rgb(255, 255, 140));
@@ -90,6 +91,7 @@ public class GridCellAdapter extends BaseAdapter {
 			case 3:
 				tv.setText(wholesheet.getColumn(column - EXTRACOLUMNS)
 						.getType());
+				break;
 			}
 		} else {
 			tv.setGravity(Gravity.LEFT);
@@ -100,8 +102,11 @@ public class GridCellAdapter extends BaseAdapter {
 			}
 			DecimalFormat df = new DecimalFormat();
 			df.setMaximumFractionDigits(digit);
-			if (wholesheet.getColumn(column - EXTRACOLUMNS).getData(row -EXTRAROWS) != null ) {
-				tv.setText(df.format(wholesheet.getColumn(column - EXTRACOLUMNS).getData(row - EXTRAROWS)));
+			if (wholesheet.getColumn(column - EXTRACOLUMNS).getData(
+					row - EXTRAROWS) != null) {
+				tv.setText(df.format(wholesheet
+						.getColumn(column - EXTRACOLUMNS).getData(
+								row - EXTRAROWS)));
 			}
 		}
 		tv.refreshDrawableState();

@@ -86,14 +86,34 @@ public class GraphDealActivity extends Activity implements
 			String yunit = (String)session.get("yunit");
 			String yname = (String)session.get("yname");
 			String graphtitle = (String)session.get("graphtitle");
-			xlabel = xname + xunit;
-			ylabel = yname + yunit;
-			x = new double[xvalues.size()];
+			xlabel = xname + "(" + xunit + ")";
+			ylabel = yname + "(" + yunit + ")";
+			int xcount = 0;
+			int ycount = 0;
 			for (int i = 0; i < xvalues.size();i++) {
+				if (xvalues.get(i) != null) {
+					xcount ++;
+				}
+				else {
+					break;
+				}
+			}
+			for (int i = 0; i < yvalues.size();i++) {
+				if (yvalues.get(i) != null) {
+					ycount ++;
+				}
+				else {
+					break;
+				}
+			}
+			int count = Math.min(xcount, ycount);
+			x = new double[count];
+			
+			for (int i = 0; i < count;i++) {
 				x[i] = xvalues.get(i);
 			}
-			y = new double[yvalues.size()];
-			for (int i = 0; i < yvalues.size();i++) {
+			y = new double[count];
+			for (int i = 0; i < count;i++) {
 				y[i] = yvalues.get(i);
 			}
 			this.graphtitle = graphtitle;

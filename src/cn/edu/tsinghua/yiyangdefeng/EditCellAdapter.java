@@ -71,7 +71,7 @@ public class EditCellAdapter extends BaseAdapter {
 		et.setWidth((int) wholesheet.getWidth());
 		et.setTextColor(Color.BLACK);
 		if (column == 0) {
-			et.setBackgroundColor(Color.rgb(225,225,225));
+			et.setBackgroundColor(Color.rgb(225, 225, 225));
 			et.setClickable(false);
 			et.setFocusable(false);
 			et.setLongClickable(false);
@@ -86,7 +86,7 @@ public class EditCellAdapter extends BaseAdapter {
 				et.setText(String.valueOf(row + 1 - EXTRAROWS));
 			}
 		} else if (row == 0 || row == 1 || row == 2) {
-			et.setBackgroundColor(Color.rgb(233,233,233));
+			et.setBackgroundColor(Color.rgb(233, 233, 233));
 			et.setGravity(Gravity.CENTER);
 			switch (row) {
 			case 0:
@@ -107,7 +107,7 @@ public class EditCellAdapter extends BaseAdapter {
 						if (!hasfocus) {
 							wholesheet.getColumn(column - EXTRACOLUMNS)
 									.setNotes(et.getText().toString());
-							et.setBackgroundColor(Color.rgb(233,233,233));
+							et.setBackgroundColor(Color.rgb(233, 233, 233));
 						}
 						if (hasfocus) {
 							et.setBackgroundColor(Color.rgb(255, 210, 166));
@@ -127,7 +127,7 @@ public class EditCellAdapter extends BaseAdapter {
 						if (!hasfocus) {
 							wholesheet.getColumn(column - EXTRACOLUMNS)
 									.setUnit(et.getText().toString());
-							et.setBackgroundColor(Color.rgb(233,233,233));
+							et.setBackgroundColor(Color.rgb(233, 233, 233));
 						}
 						if (hasfocus) {
 							et.setBackgroundColor(Color.rgb(255, 210, 166));
@@ -173,9 +173,9 @@ public class EditCellAdapter extends BaseAdapter {
 					if (!hasFocus) {
 						if (et.getText().toString() != "") {
 							try {
-								final double newdata = (double) Float.parseFloat(et
-										.getText().toString()
-										.replaceAll("\\s", ""));
+								final double newdata = (double) Float
+										.parseFloat(et.getText().toString()
+												.replaceAll("\\s", ""));
 								setItem(column - EXTRACOLUMNS, row - EXTRAROWS,
 										newdata);
 								if (!Double.toString(newdata).equals(
@@ -200,9 +200,6 @@ public class EditCellAdapter extends BaseAdapter {
 								finalConvertView.post(new Runnable() {
 									@Override
 									public void run() {
-										// throw a new warning dialog to remind
-										// the error input
-										// TODO Auto-generated method stub
 										et.setText("");
 										wholesheet
 												.cleardata(column

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.edu.tsinghua.graphdealer.GraphDealActivity;
 import cn.edu.tsinghua.yiyangdefeng.EditViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.GridViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.MainActivity;
@@ -12,7 +11,6 @@ import cn.edu.tsinghua.yiyangdefeng.R;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -20,13 +18,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 

@@ -85,7 +85,7 @@ public class GridViewActivity extends Activity {
 		vartypechoicespinner = (Spinner) this
 				.findViewById(R.id.vartypechoicespinner);
 		FrameLayout fm = (FrameLayout) this
-				.findViewById(R.id.edit_framelayout);
+				.findViewById(R.id.grid_framelayout);
 		
 		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
@@ -100,7 +100,6 @@ public class GridViewActivity extends Activity {
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
 		} else if (Session.getSession().get("wholesheet") != null) {
 			wholesheet = (WholeSheet) Session.getSession().get("wholesheet");
-			Log.e("test","this branch");
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
 			setGridWidth();
@@ -110,7 +109,6 @@ public class GridViewActivity extends Activity {
 			
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
-
 		} else {
 			Log.e("test","wrong branch");
 			wholesheet = new WholeSheet();
@@ -392,7 +390,11 @@ public class GridViewActivity extends Activity {
 					currentxcolumnnumber.add(i);
 				}
 			}
-			builder.setItems((String[]) currentxcolumnlist.toArray(),
+			String[] currentxcolumnname = new String [currentxcolumnlist.size()];
+			for(int i = 0;i < currentxcolumnlist.size(); i++) {
+				currentxcolumnname[i] = currentxcolumnlist.get(i);
+			}
+			builder.setItems(currentxcolumnname,
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -466,7 +468,11 @@ public class GridViewActivity extends Activity {
 				currentycolumnnumber.add(i);
 			}
 		}
-		builder.setItems((String[]) currentycolumnlist.toArray(),
+		String[] currentycolumnname = new String [currentycolumnlist.size()];
+		for(int i = 0;i < currentycolumnlist.size(); i++) {
+			currentycolumnname[i] = currentycolumnlist.get(i);
+		}
+		builder.setItems(currentycolumnname,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
