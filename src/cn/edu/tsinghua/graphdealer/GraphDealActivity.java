@@ -6,10 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import cn.edu.tsinghua.graphdealer.GraphView.Mstyle;
 import cn.edu.tsinghua.yiyangdefeng.MainActivity;
 import cn.edu.tsinghua.yiyangdefeng.R;
+import cn.edu.tsinghua.yiyangdefeng.Session;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -62,26 +64,56 @@ public class GraphDealActivity extends Activity implements
 			smoothline, brockenline, noline;
 	int yesornoshow = 0, lineshow = 3, line = 2;
 	RadioGroup yornshow, showline, linear;
-
+	protected String graphtitle;
 	private final static String ALBUM_PATH = Environment
 			.getExternalStorageDirectory() + "/DataHU_Figure/";
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.graphview);
 		LinearLayout ll = (LinearLayout) findViewById(R.id.graphlinearlayout); 
-		x = new double[16];
-		y = new double[x.length];
-		isdelete = new boolean[x.length];
-		for (int i = 0; i < x.length; i++) {
-			x[i] = i + 1;
-			y[i] = Math.pow(2, x[i]);
-			isdelete[i] = false;
+		String xlabel;
+		String ylabel;
+		if (Session.getSession().get("xvalues") != null) {
+			Session session = Session.getSession();
+			List<Double> xvalues = (List<Double>) session.get("xvalues");
+			List<Double> yvalues = (List<Double>) session.get("yvalues");
+			String xunit = (String)session.get("xunit");
+			String xname = (String)session.get("xname");
+			String yunit = (String)session.get("yunit");
+			String yname = (String)session.get("yname");
+			String graphtitle = (String)session.get("graphtitle");
+			xlabel = xname + xunit;
+			ylabel = yname + yunit;
+			x = new double[xvalues.size()];
+			for (int i = 0; i < xvalues.size();i++) {
+				x[i] = xvalues.get(i);
+			}
+			y = new double[yvalues.size()];
+			for (int i = 0; i < yvalues.size();i++) {
+				y[i] = yvalues.get(i);
+			}
+			this.graphtitle = graphtitle;
+			isdelete = new boolean[x.length];
 		}
-
-		figure = new GraphView(this, x, y, "x", "y");
+		
+		else {
+			//just an example
+			x = new double[16];
+			y = new double[x.length];
+			isdelete = new boolean[x.length];
+			for (int i = 0; i < x.length; i++) {
+				x[i] = i + 1;
+				y[i] = Math.pow(2, x[i]);
+				isdelete[i] = false;
+			}
+			xlabel = "x";
+			ylabel = "y";
+		}
+		figure = new GraphView(this, x, y, xlabel, ylabel);
 		figure.setBackgroundColor(Color.WHITE);
 		figure.setMstyle(Mstyle.Line);
 		ll.addView(figure);
@@ -92,7 +124,7 @@ public class GraphDealActivity extends Activity implements
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MENU_SAVE, Menu.NONE, "´æ´¢Í¼Ïñ");
 		menu.add(Menu.NONE, MENU_SET_FIGURE, Menu.NONE, "Í¼ÏñÉèÖÃ");
-		menu.add(Menu.NONE, MENU_SET_XY, Menu.NONE, "ÉèÖÃ×ø±ê");
+		menu.add(Menu.NONE, MENU_SET_XY, Menu.NONE, "ÉèÖÃ×ø±êÖáÎÄ×Ö");
 		menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "É¾³ýÍ¼Ïñ");
 		return true;
 	}

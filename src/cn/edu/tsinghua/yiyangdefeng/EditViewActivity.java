@@ -53,7 +53,9 @@ public class EditViewActivity extends Activity {
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
 		titletv = (TextView) findViewById(R.id.edittextview);
-		if (savedInstanceState == null) {
+		FrameLayout fm = (FrameLayout) this
+				.findViewById(R.id.edit_framelayout);
+		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
@@ -61,29 +63,18 @@ public class EditViewActivity extends Activity {
 			setGridWidth();
 			eca = new EditCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(eca);
-			FrameLayout fm = (FrameLayout) this
-					.findViewById(R.id.edit_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("编辑界面-" + wholesheet.getName());
-		} else if (savedInstanceState.getString("FILENAME") != null) {
-			String filename = savedInstanceState.getString("FILENAME");
-			try {
-				wholesheet = dm.openFile(filename);
-				mygridview.setNumColumns(wholesheet.getColumns()
-						+ EditCellAdapter.EXTRACOLUMNS);
+		} else if (Session.getSession().get("wholesheet") != null) {
+			wholesheet = (WholeSheet) Session.getSession().get("wholesheet");
+			mygridview.setNumColumns(wholesheet.getColumns()
+					+ EditCellAdapter.EXTRACOLUMNS);
 
-				setGridWidth();
-				mygridview.setAdapter(new EditCellAdapter(
-						getApplicationContext(), wholesheet));
-				FrameLayout fm = (FrameLayout) this
-						.findViewById(R.id.edit_framelayout);
-				fm.addView(mygridview);
-				titletv.setText("编辑界面-" + wholesheet.getName());
-			} catch (IOException e) {
-				Toast toast = Toast.makeText(EditViewActivity.this,
-						"很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
-				toast.show();
-			}
+			setGridWidth();
+			mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
+					wholesheet));
+			fm.addView(mygridview);
+			titletv.setText("编辑界面-" + wholesheet.getName());
 		} else {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
@@ -92,8 +83,6 @@ public class EditViewActivity extends Activity {
 			setGridWidth();
 			eca = new EditCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(eca);
-			FrameLayout fm = (FrameLayout) this
-					.findViewById(R.id.edit_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("编辑界面-" + wholesheet.getName());
 		}
@@ -412,6 +401,9 @@ public class EditViewActivity extends Activity {
 	}
 
 	public void gotoObserveMode() {
+		Session.getSession().cleanUpSession();
+		Session session = Session.getSession();
+		session.put("wholesheet", wholesheet);
 		Intent intent = new Intent();
 		intent.setClass(EditViewActivity.this, GridViewActivity.class);
 		startActivity(intent);

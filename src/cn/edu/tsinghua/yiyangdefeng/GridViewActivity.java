@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -83,8 +84,10 @@ public class GridViewActivity extends Activity {
 				.findViewById(R.id.columnchoicespinner);
 		vartypechoicespinner = (Spinner) this
 				.findViewById(R.id.vartypechoicespinner);
-
-		if (savedInstanceState == null) {
+		FrameLayout fm = (FrameLayout) this
+				.findViewById(R.id.edit_framelayout);
+		
+		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
@@ -93,31 +96,23 @@ public class GridViewActivity extends Activity {
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
 					digit);
 			mygridview.setAdapter(gca);
-			FrameLayout fm = (FrameLayout) this
-					.findViewById(R.id.grid_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
-		} else if (savedInstanceState.getString("FILENAME") != null) {
-			String filename = savedInstanceState.getString("FILENAME");
-			try {
-				wholesheet = dm.openFile(filename);
-				mygridview.setNumColumns(wholesheet.getColumns()
-						+ EditCellAdapter.EXTRACOLUMNS);
+		} else if (Session.getSession().get("wholesheet") != null) {
+			wholesheet = (WholeSheet) Session.getSession().get("wholesheet");
+			Log.e("test","this branch");
+			mygridview.setNumColumns(wholesheet.getColumns()
+					+ EditCellAdapter.EXTRACOLUMNS);
+			setGridWidth();
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
+					digit);
+			mygridview.setAdapter(gca);
+			
+			fm.addView(mygridview);
+			titletv.setText("数据查看处理界面-" + wholesheet.getName());
 
-				setGridWidth();
-				gca = new GridCellAdapter(getApplicationContext(), wholesheet,
-						digit);
-				mygridview.setAdapter(gca);
-				FrameLayout fm = (FrameLayout) this
-						.findViewById(R.id.edit_framelayout);
-				fm.addView(mygridview);
-				titletv.setText("数据查看处理界面-" + wholesheet.getName());
-			} catch (IOException e) {
-				Toast toast = Toast.makeText(GridViewActivity.this,
-						"很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
-				toast.show();
-			}
 		} else {
+			Log.e("test","wrong branch");
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
@@ -126,8 +121,6 @@ public class GridViewActivity extends Activity {
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
 					digit);
 			mygridview.setAdapter(gca);
-			FrameLayout fm = (FrameLayout) this
-					.findViewById(R.id.grid_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
 		}
@@ -394,15 +387,16 @@ public class GridViewActivity extends Activity {
 			final List<Integer> currentxcolumnnumber = new ArrayList<Integer>();
 			for (int i = 0; i < wholesheet.getColumns(); i++) {
 				if (wholesheet.getColumn(i).getType().equals("X")) {
-					currentxcolumnlist.add(CommonTools.ChangeNumberintoLetter(i + 1));
+					currentxcolumnlist.add(CommonTools
+							.ChangeNumberintoLetter(i + 1));
 					currentxcolumnnumber.add(i);
 				}
 			}
-			builder.setItems((String[])currentxcolumnlist.toArray(),
+			builder.setItems((String[]) currentxcolumnlist.toArray(),
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							drawX = currentxcolumnnumber.get(which);						
+							drawX = currentxcolumnnumber.get(which);
 							openychoice();
 						}
 
@@ -428,12 +422,15 @@ public class GridViewActivity extends Activity {
 	}
 
 	public void gotoEditMode() {
+		Session.getSession().cleanUpSession();
+		Session session = Session.getSession();
+		session.put("wholesheet", wholesheet);
 		Intent intent = new Intent();
 		intent.setClass(GridViewActivity.this, EditViewActivity.class);
 		startActivity(intent);
 		finish();
 	}
-	
+
 	public void gotoDrawMode() {
 		Intent intent = new Intent();
 		intent.setClass(GridViewActivity.this, GraphDealActivity.class);
@@ -443,6 +440,7 @@ public class GridViewActivity extends Activity {
 		String xname = wholesheet.getColumn(drawX).getNotes();
 		String yunit = wholesheet.getColumn(drawY).getUnit();
 		String yname = wholesheet.getColumn(drawY).getNotes();
+		Session.getSession().cleanUpSession();
 		Session session = Session.getSession();
 		session.put("xvalues", xvalues);
 		session.put("yvalues", yvalues);
@@ -450,38 +448,40 @@ public class GridViewActivity extends Activity {
 		session.put("xname", xname);
 		session.put("yunit", yunit);
 		session.put("yname", yname);
+		session.put("graphtitle",wholesheet.getGraphTitle());
 		startActivity(intent);
 		finish();
 	}
-	
+
 	public void openychoice() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(GridViewActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				GridViewActivity.this);
 		builder.setTitle("请选择Y中的一列作为因变量：");
 		List<String> currentycolumnlist = new ArrayList<String>();
 		final List<Integer> currentycolumnnumber = new ArrayList<Integer>();
 		for (int i = 0; i < wholesheet.getColumns(); i++) {
 			if (wholesheet.getColumn(i).getType().equals("Y")) {
-				currentycolumnlist.add(CommonTools.ChangeNumberintoLetter(i + 1));
+				currentycolumnlist.add(CommonTools
+						.ChangeNumberintoLetter(i + 1));
 				currentycolumnnumber.add(i);
 			}
 		}
-		builder.setItems((String[])currentycolumnlist.toArray(),
+		builder.setItems((String[]) currentycolumnlist.toArray(),
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						drawY = currentycolumnnumber.get(which);						
+						drawY = currentycolumnnumber.get(which);
 						gotoDrawMode();
 					}
 
 				});
 		builder.setCancelable(true);
-		builder.setNegativeButton("取消",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-					}
-				});
+			}
+		});
 		builder.show();
 	}
 
