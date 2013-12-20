@@ -35,14 +35,14 @@ public class EditViewActivity extends Activity {
 	protected final int DRAW = Menu.FIRST + 8;
 	protected final int CHANGENAME = Menu.FIRST + 9;
 	protected TextView titletv;
-	
+
 	protected DataManager dm;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dm = new DataManager();		
+		dm = new DataManager();
 		setContentView(R.layout.data_editview);
 		mygridview = new MyGridView(this);
 		mygridview.setHorizontalScrollBarEnabled(true);
@@ -52,21 +52,20 @@ public class EditViewActivity extends Activity {
 		mygridview.setGravity(Gravity.CENTER);
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
-		titletv = (TextView)findViewById(R.id.edittextview);
+		titletv = (TextView) findViewById(R.id.edittextview);
 		if (savedInstanceState == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			eca = new EditCellAdapter(getApplicationContext(),wholesheet);
+			eca = new EditCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(eca);
 			FrameLayout fm = (FrameLayout) this
 					.findViewById(R.id.edit_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("编辑界面-" + wholesheet.getName());
-		}
-		else if (savedInstanceState.getString("FILENAME") != null) {
+		} else if (savedInstanceState.getString("FILENAME") != null) {
 			String filename = savedInstanceState.getString("FILENAME");
 			try {
 				wholesheet = dm.openFile(filename);
@@ -74,19 +73,29 @@ public class EditViewActivity extends Activity {
 						+ EditCellAdapter.EXTRACOLUMNS);
 
 				setGridWidth();
-				mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
-						wholesheet));
+				mygridview.setAdapter(new EditCellAdapter(
+						getApplicationContext(), wholesheet));
 				FrameLayout fm = (FrameLayout) this
 						.findViewById(R.id.edit_framelayout);
 				fm.addView(mygridview);
 				titletv.setText("编辑界面-" + wholesheet.getName());
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
+				Toast toast = Toast.makeText(EditViewActivity.this,
+						"很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
 				toast.show();
 			}
-	}
-		else {
-			throw new RuntimeException("Failure in creating editview!");
+		} else {
+			wholesheet = new WholeSheet();
+			mygridview.setNumColumns(wholesheet.getColumns()
+					+ EditCellAdapter.EXTRACOLUMNS);
+
+			setGridWidth();
+			eca = new EditCellAdapter(getApplicationContext(), wholesheet);
+			mygridview.setAdapter(eca);
+			FrameLayout fm = (FrameLayout) this
+					.findViewById(R.id.edit_framelayout);
+			fm.addView(mygridview);
+			titletv.setText("编辑界面-" + wholesheet.getName());
 		}
 	}
 
@@ -117,15 +126,18 @@ public class EditViewActivity extends Activity {
 		AlertDialog.Builder builder;
 		switch (item.getItemId()) {
 		case SAVE:
-			File file = new File(Environment.getExternalStorageDirectory().getName() + "/DataHU");
+			File file = new File(Environment.getExternalStorageDirectory()
+					.getName() + "/DataHU");
 			file.mkdir();
 			String filepath = file.getName() + wholesheet.getName() + ".csv";
 			try {
 				dm.saveFile(wholesheet, filepath);
-				Toast toast = Toast.makeText(EditViewActivity.this,"保存文件" + filepath + "成功",Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(EditViewActivity.this, "保存文件"
+						+ filepath + "成功", Toast.LENGTH_LONG);
 				toast.show();
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(EditViewActivity.this,
+						"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
 				toast.show();
 			}
 			return true;
@@ -296,19 +308,20 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							try {
-							float newwidth = Float.parseFloat(et.getText().toString());
-								if(newwidth > 0) {
+								float newwidth = Float.parseFloat(et.getText()
+										.toString());
+								if (newwidth > 0) {
 									wholesheet.setWidth(newwidth);
 									setGridWidth();
 									eca.notifyDataSetChanged();
 								}
-							}
-							catch (NumberFormatException nfe) {
-								Toast toast = Toast.makeText(EditViewActivity.this, "您的输入有误", Toast.LENGTH_SHORT);
+							} catch (NumberFormatException nfe) {
+								Toast toast = Toast.makeText(
+										EditViewActivity.this, "您的输入有误",
+										Toast.LENGTH_SHORT);
 								toast.show();
 							}
-							
-							
+
 						}
 					});
 			builder.setNegativeButton("取消",
@@ -334,18 +347,19 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							try {
-								float newheight = Float.parseFloat(et2.getText().toString());
-							if(newheight > 0) {
-								wholesheet.setHeight(newheight);
-								eca.notifyDataSetChanged();
-							}
-							}
-							catch (NumberFormatException nfe) {
-								Toast toast = Toast.makeText(EditViewActivity.this, "您的输入有误", Toast.LENGTH_SHORT);
+								float newheight = Float.parseFloat(et2
+										.getText().toString());
+								if (newheight > 0) {
+									wholesheet.setHeight(newheight);
+									eca.notifyDataSetChanged();
+								}
+							} catch (NumberFormatException nfe) {
+								Toast toast = Toast.makeText(
+										EditViewActivity.this, "您的输入有误",
+										Toast.LENGTH_SHORT);
 								toast.show();
 							}
-							
-							
+
 						}
 					});
 			builder.setNegativeButton("取消",
@@ -371,14 +385,15 @@ public class EditViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							String newname = et3.getText().toString();
-							if(!newname.equals("")) {
+							if (!newname.equals("")) {
 								wholesheet.setName(newname);
 								eca.notifyDataSetChanged();
 								titletv.setText("编辑界面-" + newname);
-							}
-							else{
-							
-								Toast toast = Toast.makeText(EditViewActivity.this, "名称不能为空", Toast.LENGTH_SHORT);
+							} else {
+
+								Toast toast = Toast.makeText(
+										EditViewActivity.this, "名称不能为空",
+										Toast.LENGTH_SHORT);
 								toast.show();
 							}
 						}
@@ -402,7 +417,7 @@ public class EditViewActivity extends Activity {
 		startActivity(intent);
 		finish();
 	}
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
