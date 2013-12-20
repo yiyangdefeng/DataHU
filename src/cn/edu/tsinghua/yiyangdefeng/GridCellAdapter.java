@@ -1,5 +1,7 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
+import java.text.DecimalFormat;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;
@@ -7,9 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class GridCellAdapter extends BaseAdapter {
@@ -17,10 +17,12 @@ public class GridCellAdapter extends BaseAdapter {
 	protected final int EXTRAROWS = 4;
 	private LayoutInflater mInflater;
 	protected WholeSheet wholesheet;
+	protected int digit;
 
-	public GridCellAdapter(Context context, WholeSheet wholesheet) {
+	public GridCellAdapter(Context context, WholeSheet wholesheet,int digit) {
 		mInflater = LayoutInflater.from(context);
 		this.wholesheet = wholesheet;
+		this.digit = digit;
 	}
 
 	@Override
@@ -40,23 +42,10 @@ public class GridCellAdapter extends BaseAdapter {
 		return position;
 	}
 
-	static java.util.Map<Integer,Boolean> G = null;
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final int row = getRow(position);
 		final int column = getColumn(position);
-		final int _pos = position;
-		if (G == null) {
-			G = new java.util.HashMap<Integer, Boolean>();
-		}
-		if (G.get(position) != null) {
-			if (convertView == null) {
-				throw new RuntimeException();
-			}
-		} else {
-			G.put(position, true);
-		}
-		if(!(column != 0 && row == 3)) {
 			TextView tv;
 			if (convertView == null) {
 				convertView = mInflater.inflate(R.layout.textcell, null);
@@ -98,6 +87,8 @@ public class GridCellAdapter extends BaseAdapter {
 					tv.setText(wholesheet.getColumn(column - EXTRACOLUMNS)
 							.getUnit());
 					break;
+				case 3:
+					tv.setText(wholesheet.getColumn(column - EXTRACOLUMNS).getType());
 				}
 			} else {
 				tv.setGravity(Gravity.LEFT);
@@ -107,86 +98,11 @@ public class GridCellAdapter extends BaseAdapter {
 				else {
 					tv.setBackgroundColor(Color.WHITE);
 				}
-				tv.setText(getRow(position) + "," + getColumn(position));
+				DecimalFormat df = new DecimalFormat();
+				df.setMaximumFractionDigits(digit);
+				tv.setText(df.format(wholesheet.getColumn(column).getData(row)));
 			}
 			tv.refreshDrawableState();
-		}
-		else {
-			if (convertView == null) {
-				convertView = mInflater
-						.inflate(R.layout.spinner_gridview, null);
-			}
-			Spinner gridspinner = (Spinner) convertView
-					.findViewById(R.id.gridspinner);
-			BaseAdapter ba = new BaseAdapter() {
-				public int getCount() {
-					return VarType.values().length;
-				}
-
-				public Object getItem(int position) {
-					return null;
-				}
-
-				public long getItemId(int position) {
-					return position;
-				}
-
-				public View getView(int position, View convertView,
-						ViewGroup parent) {
-
-					if (convertView == null) {
-						convertView = mInflater
-								.inflate(R.layout.textcell, null);
-					}
-					convertView.setBackgroundColor(Color.rgb(255, 255, 140));
-					TextView tv = (TextView) convertView
-							.findViewById(R.id.textcell);
-					tv.setTextSize(TypedValue.COMPLEX_UNIT_PX,25);
-					tv.setHeight((int) wholesheet.getHeight());
-					tv.setWidth((int) wholesheet.getWidth());
-					tv.setTextColor(Color.BLACK);
-					tv.setGravity(Gravity.CENTER);
-					
-					switch (position) {
-					case 0:
-						tv.setText("X," + _pos + "," + row + "," + column);
-						break;
-					case 1:
-						tv.setText("Y," + _pos + "," + row + "," + column);
-						break;
-					}
-					return convertView;
-				}
-			};
-			ViewGroup.LayoutParams lp = gridspinner.getLayoutParams();
-			lp.width = (int)wholesheet.getWidth();
-			lp.height = (int)wholesheet.getHeight();
-			gridspinner.setLayoutParams(lp);
-			gridspinner.setBackgroundColor(Color.rgb(255, 255, 140));
-			gridspinner.setAdapter(ba);
-			gridspinner
-					.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-						@Override
-						public void onItemSelected(AdapterView<?> arg0,
-								View arg1, int position, long arg3) {
-							switch (position) {
-							case 0:
-								wholesheet.getColumn(column - EXTRACOLUMNS).setType(VarType.X);
-								break;
-							case 1:
-								wholesheet.getColumn(column - EXTRACOLUMNS).setType(VarType.Y);
-								break;
-							}
-
-						}
-
-						@Override
-						public void onNothingSelected(AdapterView<?> arg0) {
-						}
-
-					});
-		}
 		return convertView;
 	}
 
@@ -197,5 +113,8 @@ public class GridCellAdapter extends BaseAdapter {
 	public int getColumn(int position) {
 		return (position % (wholesheet.getColumns() + EXTRACOLUMNS));
 	}
-
+	
+	public void setDigit(int digit) {
+		this.digit = digit;
+	}
 }

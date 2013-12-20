@@ -86,7 +86,7 @@ public class EditCellAdapter extends BaseAdapter {
 				et.setText(String.valueOf(row + 1 - EXTRAROWS));
 			}
 		} else if (row == 0 || row == 1 || row == 2) {
-			et.setBackgroundColor(Color.rgb(225,225,225));
+			et.setBackgroundColor(Color.rgb(233,233,233));
 			et.setGravity(Gravity.CENTER);
 			switch (row) {
 			case 0:
@@ -107,6 +107,10 @@ public class EditCellAdapter extends BaseAdapter {
 						if (!hasfocus) {
 							wholesheet.getColumn(column - EXTRACOLUMNS)
 									.setNotes(et.getText().toString());
+							et.setBackgroundColor(Color.rgb(233,233,233));
+						}
+						if (hasfocus) {
+							et.setBackgroundColor(Color.rgb(255, 210, 166));
 						}
 					}
 
@@ -123,6 +127,10 @@ public class EditCellAdapter extends BaseAdapter {
 						if (!hasfocus) {
 							wholesheet.getColumn(column - EXTRACOLUMNS)
 									.setUnit(et.getText().toString());
+							et.setBackgroundColor(Color.rgb(233,233,233));
+						}
+						if (hasfocus) {
+							et.setBackgroundColor(Color.rgb(255, 210, 166));
 						}
 					}
 				});
@@ -131,15 +139,20 @@ public class EditCellAdapter extends BaseAdapter {
 		} else {
 			et.setFocusable(true);
 			et.setClickable(true);
+			final boolean iseven;
 			if (row % 2 == 0) {
 				et.setBackgroundColor(Color.WHITE);
+				iseven = true;
 			} else {
-				et.setBackgroundColor(Color.rgb(200, 255, 255));
+				et.setBackgroundColor(Color.rgb(225, 255, 255));
+				iseven = false;
 			}
 			et.setGravity(Gravity.FILL);
 			if (wholesheet.columndata.get(column - EXTRACOLUMNS).getData(
 					row - EXTRAROWS) != null) {
-				et.setText(String.valueOf(wholesheet.columndata.get(
+				DecimalFormat df = new DecimalFormat();
+				df.setMaximumFractionDigits(3);
+				et.setText(df.format(wholesheet.columndata.get(
 						column - EXTRACOLUMNS).getData(row - EXTRAROWS)));
 			} else {
 				et.setText("");
@@ -147,6 +160,16 @@ public class EditCellAdapter extends BaseAdapter {
 			et.setOnFocusChangeListener(new OnFocusChangeListener() {
 				@Override
 				public void onFocusChange(View view, boolean hasFocus) {
+					if (!hasFocus) {
+						if (iseven) {
+							et.setBackgroundColor(Color.WHITE);
+						} else {
+							et.setBackgroundColor(Color.rgb(225, 255, 255));
+						}
+					}
+					if (hasFocus) {
+						et.setBackgroundColor(Color.rgb(255, 210, 166));
+					}
 					if (!hasFocus) {
 						if (et.getText().toString() != "") {
 							try {

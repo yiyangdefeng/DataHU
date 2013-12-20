@@ -2,10 +2,6 @@ package cn.edu.tsinghua.yiyangdefeng;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-
-import cn.edu.tsinghua.graphdealer.GraphDealActivity;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,7 +9,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -21,6 +16,7 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class EditViewActivity extends Activity {
@@ -37,6 +33,8 @@ public class EditViewActivity extends Activity {
 	protected final int CHANGEWIDTH = Menu.FIRST + 6;
 	protected final int CHANGEHEIGHT = Menu.FIRST + 7;
 	protected final int DRAW = Menu.FIRST + 8;
+	protected final int CHANGENAME = Menu.FIRST + 9;
+	protected TextView titletv;
 	
 	protected DataManager dm;
 
@@ -54,6 +52,7 @@ public class EditViewActivity extends Activity {
 		mygridview.setGravity(Gravity.CENTER);
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
+		titletv = (TextView)findViewById(R.id.edittextview);
 		if (savedInstanceState == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
@@ -65,6 +64,7 @@ public class EditViewActivity extends Activity {
 			FrameLayout fm = (FrameLayout) this
 					.findViewById(R.id.edit_framelayout);
 			fm.addView(mygridview);
+			titletv.setText("编辑界面-" + wholesheet.getName());
 		}
 		else if (savedInstanceState.getString("FILENAME") != null) {
 			String filename = savedInstanceState.getString("FILENAME");
@@ -79,6 +79,7 @@ public class EditViewActivity extends Activity {
 				FrameLayout fm = (FrameLayout) this
 						.findViewById(R.id.edit_framelayout);
 				fm.addView(mygridview);
+				titletv.setText("编辑界面-" + wholesheet.getName());
 			} catch (IOException e) {
 				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
 				toast.show();
@@ -107,10 +108,10 @@ public class EditViewActivity extends Activity {
 		menu.add(Menu.NONE, CHANGEWIDTH, Menu.NONE, "调整行宽");
 		menu.add(Menu.NONE, CHANGEHEIGHT, Menu.NONE, "调整列高");
 		menu.add(Menu.NONE, DRAW, Menu.NONE, "画图");
+		menu.add(Menu.NONE, CHANGENAME, Menu.NONE, "更改表格名称");
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		AlertDialog.Builder builder;
@@ -118,18 +119,14 @@ public class EditViewActivity extends Activity {
 		case SAVE:
 			File file = new File(Environment.getExternalStorageDirectory().getName() + "/DataHU");
 			file.mkdir();
-			Log.e("test",file.getName());
-			Date date = new Date();
-			String filepath = file.getName() + "/sheetdata" + String.valueOf(date.getDate()) + ".csv";
-			Log.e("test",filepath);
+			String filepath = file.getName() + wholesheet.getName() + ".csv";
 			try {
 				dm.saveFile(wholesheet, filepath);
 				Toast toast = Toast.makeText(EditViewActivity.this,"保存文件" + filepath + "成功",Toast.LENGTH_LONG);
 				toast.show();
 			} catch (IOException e) {
-				throw new RuntimeException(e);
-				//Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
-				//toast.show();
+				Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
+				toast.show();
 			}
 			return true;
 		case OBSERVATIONMODE:
@@ -349,6 +346,41 @@ public class EditViewActivity extends Activity {
 							}
 							
 							
+						}
+					});
+			builder.setNegativeButton("取消",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
+			builder.show();
+			return true;
+		case CHANGENAME:
+			builder = new AlertDialog.Builder(EditViewActivity.this);
+			builder.setTitle("请输入数据表名称");
+			final EditText et3 = new EditText(EditViewActivity.this);
+			et3.setText(wholesheet.getName());
+			et3.setFocusable(true);
+			et3.setClickable(true);
+			builder.setView(et3);
+			builder.setCancelable(true);
+			builder.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							String newname = et3.getText().toString();
+							if(!newname.equals("")) {
+								wholesheet.setName(newname);
+								eca.notifyDataSetChanged();
+								titletv.setText("编辑界面-" + newname);
+							}
+							else{
+							
+								Toast toast = Toast.makeText(EditViewActivity.this, "名称不能为空", Toast.LENGTH_SHORT);
+								toast.show();
+							}
 						}
 					});
 			builder.setNegativeButton("取消",
