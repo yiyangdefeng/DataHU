@@ -15,4 +15,41 @@ public class CommonTools {
 		} else
 			return "Unknown";
 	}
+	
+	//operators  contains "sin","cos","tan","1/x","x^y","ln","exp","arcsin","arccos","arctan","abs"
+	public static Double Calculate(double first,double second,String operator) {
+		if (operator.equals("+")) {
+			return first + second;
+		} else if (operator.equals("-")) {
+			return first - second;
+		} else if (operator.equals("*")) {
+			return first * second;
+		} else if (operator.equals("/")) {
+			return first / second;
+		} else if (operator.equals("sin")) {
+			return Math.sin(first);
+		} else if (operator.equals("cos")) {
+			return Math.cos(first);
+		} else if (operator.equals("tan")) {
+			return Math.tan(first);
+		} else if (operator.equals("1/x")) {
+			return 1 / first;
+		} else if (operator.equals("ln")) {
+			return Math.log(first);
+		} else if (operator.equals("exp")) {
+			return Math.exp(first);
+		} else if (operator.equals("arcsin")) {
+			return Math.asin(first);
+		} else if (operator.equals("arccos")) {
+			return Math.acos(first);
+		} else if (operator.equals("arctan")) {
+			return Math.atan(first);
+		} else if (operator.equals("x^y")) {
+			return Math.pow(first, second);
+		} else if (operator.equals("abs")) {
+			return Math.abs(first);
+		}
+		
+		return null;
+	}
 }

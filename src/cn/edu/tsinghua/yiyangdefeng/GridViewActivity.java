@@ -7,12 +7,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -23,13 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,13 +49,19 @@ public class GridViewActivity extends Activity {
 	protected View varchoice;
 	protected Spinner columnchoicespinner;
 	protected Spinner vartypechoicespinner;
-	
+	public static final String[] operators = { "+", "-", "*", "/", "sin",
+			"cos", "tan", "1/x", "x^y", "ln", "exp", "arcsin", "arccos",
+			"arctan", "abs" };
+	protected String first;
+	protected String second;
+	protected boolean firstiscolumn;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dm = new DataManager();		
+		dm = new DataManager();
 		setContentView(R.layout.data_gridview);
 		mygridview = new MyGridView(this);
 		mygridview.setHorizontalScrollBarEnabled(true);
@@ -69,25 +71,27 @@ public class GridViewActivity extends Activity {
 		mygridview.setGravity(Gravity.CENTER);
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
-		titletv = (TextView)findViewById(R.id.gridtextview);
+		titletv = (TextView) findViewById(R.id.gridtextview);
 		varchoice = this.findViewById(R.layout.vartypechoice);
-		columnchoicespinner = (Spinner)this.findViewById(R.id.columnchoicespinner);
-		vartypechoicespinner = (Spinner)this.findViewById(R.id.vartypechoicespinner);
-		
+		columnchoicespinner = (Spinner) this
+				.findViewById(R.id.columnchoicespinner);
+		vartypechoicespinner = (Spinner) this
+				.findViewById(R.id.vartypechoicespinner);
+
 		if (savedInstanceState == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			gca = new GridCellAdapter(getApplicationContext(),wholesheet,digit);
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
+					digit);
 			mygridview.setAdapter(gca);
 			FrameLayout fm = (FrameLayout) this
 					.findViewById(R.id.grid_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
-		}
-		else if (savedInstanceState.getString("FILENAME") != null) {
+		} else if (savedInstanceState.getString("FILENAME") != null) {
 			String filename = savedInstanceState.getString("FILENAME");
 			try {
 				wholesheet = dm.openFile(filename);
@@ -95,31 +99,33 @@ public class GridViewActivity extends Activity {
 						+ EditCellAdapter.EXTRACOLUMNS);
 
 				setGridWidth();
-				gca = new GridCellAdapter(getApplicationContext(),wholesheet,digit);
+				gca = new GridCellAdapter(getApplicationContext(), wholesheet,
+						digit);
 				mygridview.setAdapter(gca);
 				FrameLayout fm = (FrameLayout) this
 						.findViewById(R.id.edit_framelayout);
 				fm.addView(mygridview);
 				titletv.setText("数据查看处理界面-" + wholesheet.getName());
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(GridViewActivity.this, "很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
+				Toast toast = Toast.makeText(GridViewActivity.this,
+						"很抱歉，读取文件出错！", Toast.LENGTH_SHORT);
 				toast.show();
 			}
-		}
-		else {
+		} else {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			gca = new GridCellAdapter(getApplicationContext(),wholesheet,digit);
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
+					digit);
 			mygridview.setAdapter(gca);
 			FrameLayout fm = (FrameLayout) this
 					.findViewById(R.id.grid_framelayout);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
 		}
-	} 
+	}
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -131,7 +137,7 @@ public class GridViewActivity extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -149,15 +155,18 @@ public class GridViewActivity extends Activity {
 		AlertDialog.Builder builder;
 		switch (item.getItemId()) {
 		case SAVE:
-			File file = new File(Environment.getExternalStorageDirectory().getName() + "/DataHU");
+			File file = new File(Environment.getExternalStorageDirectory()
+					.getName() + "/DataHU");
 			file.mkdir();
 			String filepath = file.getName() + wholesheet.getName() + ".csv";
 			try {
 				dm.saveFile(wholesheet, filepath);
-				Toast toast = Toast.makeText(GridViewActivity.this,"保存文件" + filepath + "成功",Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(GridViewActivity.this, "保存文件"
+						+ filepath + "成功", Toast.LENGTH_LONG);
 				toast.show();
 			} catch (IOException e) {
-				Toast toast = Toast.makeText(GridViewActivity.this, "很抱歉，存储文件出错！",Toast.LENGTH_LONG);
+				Toast toast = Toast.makeText(GridViewActivity.this,
+						"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
 				toast.show();
 			}
 			return true;
@@ -178,18 +187,21 @@ public class GridViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							try {
-							int newdigit = Integer.parseInt(et.getText().toString());
-								if(newdigit < 0 || newdigit > 6) {
-									Toast toast = Toast.makeText(GridViewActivity.this, "位数不符合要求", Toast.LENGTH_SHORT);
+								int newdigit = Integer.parseInt(et.getText()
+										.toString());
+								if (newdigit < 0 || newdigit > 6) {
+									Toast toast = Toast.makeText(
+											GridViewActivity.this, "位数不符合要求",
+											Toast.LENGTH_SHORT);
 									toast.show();
-								}
-								else {
+								} else {
 									gca.setDigit(newdigit);
 									gca.notifyDataSetChanged();
 								}
-							}
-							catch (NumberFormatException nfe) {
-								Toast toast = Toast.makeText(GridViewActivity.this, "您的输入有误", Toast.LENGTH_SHORT);
+							} catch (NumberFormatException nfe) {
+								Toast toast = Toast.makeText(
+										GridViewActivity.this, "您的输入有误",
+										Toast.LENGTH_SHORT);
 								toast.show();
 							}
 						}
@@ -207,12 +219,15 @@ public class GridViewActivity extends Activity {
 			tempcolumn = 0;
 			tempvartype = 0;
 			LayoutInflater li = this.getLayoutInflater();
-			final View vartypechoiceview = li.inflate(R.layout.vartypechoice, null);
+			final View vartypechoiceview = li.inflate(R.layout.vartypechoice,
+					null);
 			builder = new AlertDialog.Builder(GridViewActivity.this);
 			builder.setTitle("改变变量类型");
 			builder.setView(vartypechoiceview);
-			Spinner columnchoicespinner = (Spinner)vartypechoiceview.findViewById(R.id.columnchoicespinner);
-			Spinner vartypechoicespinner = (Spinner)vartypechoiceview.findViewById(R.id.vartypechoicespinner);
+			Spinner columnchoicespinner = (Spinner) vartypechoiceview
+					.findViewById(R.id.columnchoicespinner);
+			Spinner vartypechoicespinner = (Spinner) vartypechoiceview
+					.findViewById(R.id.vartypechoicespinner);
 			columnchoicespinner.setAdapter(new BaseAdapter() {
 				@Override
 				public int getCount() {
@@ -241,20 +256,22 @@ public class GridViewActivity extends Activity {
 					return convertView;
 				}
 			});
-			columnchoicespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1,
-						int position, long arg3) {
-					// TODO Auto-generated method stub
-					tempcolumn = position;
-				}
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-					
+			columnchoicespinner
+					.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+						@Override
+						public void onItemSelected(AdapterView<?> arg0,
+								View arg1, int position, long arg3) {
+							// TODO Auto-generated method stub
+							tempcolumn = position;
+						}
+
+						@Override
+						public void onNothingSelected(AdapterView<?> arg0) {
+							// TODO Auto-generated method stub
+
+						}
+					});
+
 			vartypechoicespinner.setAdapter(new BaseAdapter() {
 				@Override
 				public int getCount() {
@@ -279,31 +296,31 @@ public class GridViewActivity extends Activity {
 					tv.setWidth(40);
 					if (position == 0) {
 						tv.setText("X");
-					}
-					else if (position == 1) {
+					} else if (position == 1) {
 						tv.setText("Y");
 					}
 					convertView = tv;
 					return convertView;
 				}
 			});
-			
-			vartypechoicespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1,
-						int position, long arg3) {
-					if (position == 0) {
-						tempvartype = 0;
-					}
-					else if (position == 1) {
-						tempvartype = 1;
-					}
-				}
-				@Override
-				public void onNothingSelected(AdapterView<?> arg0) {
-					// TODO Auto-generated method stub
-				}
-			});
+
+			vartypechoicespinner
+					.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+						@Override
+						public void onItemSelected(AdapterView<?> arg0,
+								View arg1, int position, long arg3) {
+							if (position == 0) {
+								tempvartype = 0;
+							} else if (position == 1) {
+								tempvartype = 1;
+							}
+						}
+
+						@Override
+						public void onNothingSelected(AdapterView<?> arg0) {
+							// TODO Auto-generated method stub
+						}
+					});
 			builder.setCancelable(true);
 			builder.setNegativeButton("取消",
 					new DialogInterface.OnClickListener() {
@@ -317,29 +334,35 @@ public class GridViewActivity extends Activity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							if (tempvartype == 0) {
-								wholesheet.getColumn(tempcolumn).setType(VarType.X);
-							}
-							else if (tempvartype == 1) {
-								wholesheet.getColumn(tempcolumn).setType(VarType.Y);
+								wholesheet.getColumn(tempcolumn).setType(
+										VarType.X);
+							} else if (tempvartype == 1) {
+								wholesheet.getColumn(tempcolumn).setType(
+										VarType.Y);
 							}
 							gca.notifyDataSetChanged();
 						}
 					});
 			builder.show();
 			return true;
-		/*case CREATEROW:
-			builder = new AlertDialog.Builder(EditViewActivity.this);
-			builder.setTitle("请选择插入的位置的前一行，或者选择插在末尾");
-			currentrows = new String[wholesheet.getRows()];
-			for (int i = 0; i < wholesheet.getRows(); i++) {
-				currentrows[i] = String.valueOf(i + 1);
+		case CREATENEWCOLUMN:
+			first = "0";
+			second = "0";
+			firstiscolumn = false;
+
+			builder = new AlertDialog.Builder(GridViewActivity.this);
+			builder.setTitle("请输入进行运算的列，或者输入一个数：");
+			String[] currentrows = new String[wholesheet.getColumns()];
+			for (int i = 0; i < wholesheet.getColumns(); i++) {
+				currentrows[i] = CommonTools.ChangeNumberintoLetter(i + 1);
 			}
 			builder.setItems(currentrows,
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertRow(which);
-							eca.notifyDataSetChanged();
+							firstiscolumn = true;
+							first = String.valueOf(which);
+							openoperator();
 						}
 
 					});
@@ -351,70 +374,538 @@ public class GridViewActivity extends Activity {
 
 						}
 					});
-			builder.setPositiveButton("插在末尾",
+			builder.setPositiveButton("输入数字",
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertRow();
-							eca.notifyDataSetChanged();
+							firstiscolumn = false;
+							openNumberInput(true, 0);
 						}
 					});
 			builder.show();
 			return true;
-		/*case CREATECOLUMN:
-			builder = new AlertDialog.Builder(EditViewActivity.this);
-			builder.setTitle("请选择插入的位置的前一列，或者选择插在末尾");
-			currentcolumns = new String[wholesheet.getColumns()];
-			for (int i = 0; i < wholesheet.getColumns(); i++) {
-				currentcolumns[i] = String.valueOf(CommonTools
-						.ChangeNumberintoLetter(i + 1));
-			}
-			builder.setItems(currentcolumns,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertColumn(which);
-							mygridview.setNumColumns(wholesheet.getColumns()
-									+ EditCellAdapter.EXTRACOLUMNS);
-							setGridWidth();
-						}
-
-					});
-			builder.setCancelable(true);
-			builder.setNegativeButton("取消",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-
-						}
-					});
-			builder.setPositiveButton("插在末尾",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertColumn();
-							mygridview.setNumColumns(wholesheet.getColumns()
-									+ EditCellAdapter.EXTRACOLUMNS);
-							setGridWidth();
-						}
-					});
-			builder.show();
-			return true;*/
+			/*
+			 * case CREATECOLUMN: builder = new
+			 * AlertDialog.Builder(EditViewActivity.this);
+			 * builder.setTitle("请选择插入的位置的前一列，或者选择插在末尾"); currentcolumns = new
+			 * String[wholesheet.getColumns()]; for (int i = 0; i <
+			 * wholesheet.getColumns(); i++) { currentcolumns[i] =
+			 * String.valueOf(CommonTools .ChangeNumberintoLetter(i + 1)); }
+			 * builder.setItems(currentcolumns, new
+			 * DialogInterface.OnClickListener() {
+			 * 
+			 * @Override public void onClick(DialogInterface dialog, int which)
+			 * { wholesheet.insertColumn(which);
+			 * mygridview.setNumColumns(wholesheet.getColumns() +
+			 * EditCellAdapter.EXTRACOLUMNS); setGridWidth(); }
+			 * 
+			 * }); builder.setCancelable(true); builder.setNegativeButton("取消",
+			 * new DialogInterface.OnClickListener() {
+			 * 
+			 * @Override public void onClick(DialogInterface dialog, int which)
+			 * {
+			 * 
+			 * } }); builder.setPositiveButton("插在末尾", new
+			 * DialogInterface.OnClickListener() {
+			 * 
+			 * @Override public void onClick(DialogInterface dialog, int which)
+			 * { wholesheet.insertColumn();
+			 * mygridview.setNumColumns(wholesheet.getColumns() +
+			 * EditCellAdapter.EXTRACOLUMNS); setGridWidth(); } });
+			 * builder.show(); return true;
+			 */
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	
+
 	public void setGridWidth() {
 		int width = wholesheet.calcWholeWidth() + (int) wholesheet.getWidth()
 				* EditCellAdapter.EXTRACOLUMNS;
 		mygridview.setLayoutParams(new FrameLayout.LayoutParams(width, -1));
 	}
-	
+
 	public void gotoEditMode() {
 		Intent intent = new Intent();
 		intent.setClass(GridViewActivity.this, EditViewActivity.class);
 		startActivity(intent);
 		finish();
+	}
+
+	// operators contains "+" "-" "*" "/" "sin" single,"cos" single,"tan"
+	// single,"1/x" single,"x^y","ln" single,"exp" single,"arcsin"
+	// single,"arccos" single,"arctan" single,"abs" single
+	public void openoperator() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				GridViewActivity.this);
+		builder.setTitle("请选择运算符");
+		builder.setItems(operators, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (!firstiscolumn) {
+					double firstnumber = Double.parseDouble(first);
+					if (which == 4) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.sin(firstnumber), i);
+						}
+					} else if (which == 5) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.cos(firstnumber), i);
+						}
+					} else if (which == 6) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.tan(firstnumber), i);
+						}
+					} else if (which == 7) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData((1 / firstnumber), i);
+						}
+					} else if (which == 9) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.log(firstnumber), i);
+						}
+					} else if (which == 10) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.exp(firstnumber), i);
+						}
+					} else if (which == 11) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.asin(firstnumber), i);
+						}
+					} else if (which == 12) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.acos(firstnumber), i);
+						}
+					} else if (which == 13) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.atan(firstnumber), i);
+						}
+					} else if (which == 14) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							wholesheet.getColumn(wholesheet.getColumns() - 1)
+									.setData(Math.abs(firstnumber), i);
+						}
+					} else {
+						openSecondInput(which);
+					}
+				} else {
+					int selectedcolumn = Integer.parseInt(first);
+					if (which == 4) {
+						wholesheet.insertColumn();
+
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.sin(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 5) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.cos(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 6) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.tan(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 7) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										(1 / wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 9) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.log(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 10) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.exp(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 11) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.asin(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 12) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.acos(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 13) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.atan(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else if (which == 14) {
+						wholesheet.insertColumn();
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.abs(wholesheet.getColumn(
+												selectedcolumn).getData(i)), i);
+							}
+						}
+					} else {
+						openSecondInput(which);
+					}
+					gca.notifyDataSetChanged();
+				}
+			}
+
+		});
+		builder.show();
+	}
+
+	public void openSecondInput(final int operator) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				GridViewActivity.this);
+		builder.setTitle("请输入运算的第二列，或者输入数字");
+		String[] currentrows = new String[wholesheet.getColumns()];
+		for (int i = 0; i < wholesheet.getColumns(); i++) {
+			currentrows[i] = CommonTools.ChangeNumberintoLetter(i + 1);
+		}
+		builder.setItems(currentrows, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (firstiscolumn) {
+					int selectedcolumn = Integer.parseInt(first);
+					wholesheet.insertColumn();
+					for (int i = 0; i < wholesheet.getRows(); i++) {
+						if (wholesheet.getColumn(selectedcolumn).getData(i) != null
+								&& wholesheet.getColumn(which).getData(i) != null) {
+							switch (operator) {
+							case 0:
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										wholesheet.getColumn(selectedcolumn)
+												.getData(i)
+												+ wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 1:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										wholesheet.getColumn(selectedcolumn)
+												.getData(i)
+												- wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 2:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										wholesheet.getColumn(selectedcolumn)
+												.getData(i)
+												* wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 3:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										wholesheet.getColumn(selectedcolumn)
+												.getData(i)
+												/ wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 8:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.pow(
+												wholesheet.getColumn(
+														selectedcolumn)
+														.getData(i), wholesheet
+														.getColumn(which)
+														.getData(i)), i);
+
+								break;
+							}
+
+						}
+					}
+				} else {
+					double firstnumber = Double.parseDouble(first);
+					wholesheet.insertColumn();
+					for (int i = 0; i < wholesheet.getRows(); i++) {
+						if (wholesheet.getColumn(which).getData(i) != null) {
+							switch (operator) {
+							case 0:
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber
+												+ wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 1:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber
+												- wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 2:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber
+												* wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 3:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber
+												/ wholesheet.getColumn(which)
+														.getData(i), i);
+
+								break;
+							case 8:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.pow(firstnumber, wholesheet
+												.getColumn(which).getData(i)),
+										i);
+
+								break;
+
+							}
+						}
+					}
+				}
+			}
+		});
+		builder.setCancelable(true);
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+		builder.setPositiveButton("输入数字",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						openNumberInput(false, operator);
+					}
+				});
+		builder.show();
+
+	}
+
+	public void openNumberInput(final boolean isfirst, final int operator) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				GridViewActivity.this);
+		builder.setTitle("请输入数字");
+		final EditText et = new EditText(GridViewActivity.this);
+		et.setText("");
+		et.setFocusable(true);
+		et.setClickable(true);
+		builder.setView(et);
+		builder.setCancelable(true);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				if (isfirst) {
+					first = et.getText().toString();
+					openoperator();
+				} else {
+					double secondnumber = Double.parseDouble(et.getText()
+							.toString());
+					wholesheet.insertColumn();
+					if (firstiscolumn) {
+						int selectedcolumn = Integer.parseInt(first);
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
+								switch (operator) {
+								case 0:
+
+									wholesheet.getColumn(
+											wholesheet.getColumns() - 1)
+											.setData(
+													wholesheet.getColumn(
+															selectedcolumn)
+															.getData(i)
+															+ secondnumber, i);
+
+									break;
+								case 1:
+
+									wholesheet.getColumn(
+											wholesheet.getColumns() - 1)
+											.setData(
+													wholesheet.getColumn(
+															selectedcolumn)
+															.getData(i)
+															- secondnumber, i);
+
+									break;
+								case 2:
+
+									wholesheet.getColumn(
+											wholesheet.getColumns() - 1)
+											.setData(
+													wholesheet.getColumn(
+															selectedcolumn)
+															.getData(i)
+															* secondnumber, i);
+
+									break;
+								case 3:
+
+									wholesheet.getColumn(
+											wholesheet.getColumns() - 1)
+											.setData(
+													wholesheet.getColumn(
+															selectedcolumn)
+															.getData(i)
+															/ secondnumber, i);
+
+									break;
+								case 8:
+
+									wholesheet
+											.getColumn(
+													wholesheet.getColumns() - 1)
+											.setData(
+													Math.pow(
+															wholesheet
+																	.getColumn(
+																			selectedcolumn)
+																	.getData(i),
+															secondnumber), i);
+
+									break;
+								}
+							}
+						}
+					} else {
+						double firstnumber = Double.parseDouble(first);
+						for (int i = 0; i < wholesheet.getRows(); i++) {
+							switch (operator) {
+							case 0:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber + secondnumber, i);
+
+								break;
+							case 1:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber - secondnumber, i);
+
+								break;
+							case 2:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber * secondnumber, i);
+
+								break;
+							case 3:
+
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										firstnumber / secondnumber, i);
+
+								break;
+							case 8:
+								wholesheet.getColumn(
+										wholesheet.getColumns() - 1).setData(
+										Math.pow(firstnumber, secondnumber), i);
+
+								break;
+							}
+						}
+					}
+					gca.notifyDataSetChanged();
+				}
+
+			}
+		});
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+
+			}
+		});
+		builder.show();
 	}
 }
