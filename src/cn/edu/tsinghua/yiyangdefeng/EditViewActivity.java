@@ -5,6 +5,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -53,8 +54,7 @@ public class EditViewActivity extends Activity {
 		mygridview.setHorizontalSpacing(1);
 		mygridview.setVerticalSpacing(1);
 		titletv = (TextView) findViewById(R.id.edittextview);
-		FrameLayout fm = (FrameLayout) this
-				.findViewById(R.id.edit_framelayout);
+		FrameLayout fm = (FrameLayout) this.findViewById(R.id.edit_framelayout);
 		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
@@ -116,8 +116,10 @@ public class EditViewActivity extends Activity {
 		switch (item.getItemId()) {
 		case SAVE:
 			File file = new File(Environment.getExternalStorageDirectory()
-					.getName() + "/DataHU");
-			file.mkdir();
+					.getName() + "/DataHU/");
+			if (!file.exists()) {
+				file.mkdir();
+			}
 			String filepath = file.getName() + wholesheet.getName() + ".csv";
 			try {
 				dm.saveFile(wholesheet, filepath);
@@ -413,10 +415,51 @@ public class EditViewActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent = new Intent();
-			intent.setClass(EditViewActivity.this, MainActivity.class);
-			startActivity(intent);
-			finish();
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					EditViewActivity.this);
+			builder.setTitle("请注意");
+			builder.setMessage("如果退回主菜单，现有的数据会丢失，是否确认退出？");
+			builder.setCancelable(true);
+			builder.setNegativeButton("取消", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+
+				}
+
+			});
+			builder.setPositiveButton("确定", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					Intent intent = new Intent();
+					intent.setClass(EditViewActivity.this, MainActivity.class);
+					startActivity(intent);
+					finish();
+				}
+			});
+			builder.setNeutralButton("保存数据", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					File file = new File(Environment
+							.getExternalStorageDirectory().getName()
+							+ "/DataHU/");
+					if (!file.exists()) {
+						file.mkdir();
+					}
+					String filepath = file.getName() + wholesheet.getName()
+							+ ".csv";
+					try {
+						dm.saveFile(wholesheet, filepath);
+						Toast toast = Toast.makeText(EditViewActivity.this,
+								"保存文件" + filepath + "成功", Toast.LENGTH_LONG);
+						toast.show();
+					} catch (IOException e) {
+						Toast toast = Toast.makeText(EditViewActivity.this,
+								"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
+						toast.show();
+					}
+				}
+			});
+			builder.show();
 		}
 		return super.onKeyDown(keyCode, event);
 	}

@@ -1,9 +1,38 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+  
+    <item android:id="@+id/menu_save" android:orderInCategory="10" android:title="@string/menu_save"></item>    
+    <item android:id="@+id/menu_setting" android:title="@string/menu_setting" android:orderInCategory="20">
+        
+        <menu>
+            
+            <item android:id="@+id/menusetfigure" android:title="@string/menusetfigure"/>
+            
+            <item android:id="@+id/menusetxy" android:title="@string/menusetxy"/>
+            
+        </menu>
+        
+    </item>
+    <item android:id="@+id/menu_delete" android:title="@string/menu_delete" android:orderInCategory="30"></item>
+    <item android:id="@+id/menu_function" android:title="@string/menu_function" android:orderInCategory="40">
+        <menu>
+            
+            <item android:id="@+id/menunofit" android:title="@string/menunofit" />
+            
+            <item android:id="@+id/menuyx" android:title="@string/menuyx"/>
+            
+            <item android:id="@+id/menuyfunx" android:title="@string/menuyfunx"/>
+            
+            <item android:id="@+id/menuylnx" android:title="@string/menuylnx"/>
+            
+            <item android:id="@+id/menulnyx" android:title="@string/menulnyx"/>
+            
+            <item android:id="@+id/menulnylnx" android:title="@string/menulnylnx"/>
+            
+            <item android:id="@+id/menuyabx" android:title="@string/menuyabx"/>
+            
+            <item android:id="@+id/menuyaxb" android:title="@string/menuyaxb"/>
+            
+        </menu>
+    </item>
+    </menu>
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-
-</menu>

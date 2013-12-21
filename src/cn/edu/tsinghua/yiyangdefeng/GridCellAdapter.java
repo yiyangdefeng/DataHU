@@ -44,20 +44,20 @@ public class GridCellAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
-		if (convertView == null) {
-			convertView = li.inflate(R.layout.textcell, null);
-		}
+		//if (convertView == null) {
+		//	convertView = li.inflate(R.layout.textcell, null);
+		//}
 		final int row = getRow(position);
 		final int column = getColumn(position);
 		final TextView tv;
-
-		tv = (TextView) convertView.findViewById(R.id.textcell);
+		//tv = (TextView) convertView.findViewById(R.id.textcell);
+		tv =new TextView(li.getContext());
 		tv.setBackgroundColor(Color.rgb(255, 255, 140));
 		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, 25);
 		tv.setHeight((int) wholesheet.getHeight());
 		tv.setWidth((int) wholesheet.getWidth());
 		tv.setTextColor(Color.BLACK);
+		tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, wholesheet.getHeight() / 2);
 		if (column == 0) {
 			tv.setGravity(Gravity.CENTER);
 			tv.setBackgroundColor(Color.rgb(225, 225, 225));
@@ -110,7 +110,8 @@ public class GridCellAdapter extends BaseAdapter {
 			}
 		}
 		tv.refreshDrawableState();
-		return convertView;
+		return tv;
+		//return convertView;
 	}
 
 	public int getRow(int position) {

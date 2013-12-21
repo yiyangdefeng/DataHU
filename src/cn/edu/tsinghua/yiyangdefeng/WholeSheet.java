@@ -13,15 +13,16 @@ public class WholeSheet {
 	protected List<Column> columndata;
 
 	public WholeSheet() {
-		columns = 5;
-		rows = 50;
-		width = 200;
+		columns = 2;
+		rows = 30;
+		width = 300;
 		columndata = new ArrayList<Column>();
 		for (int i = 0; i < columns; i++) {
 			columndata.add(new Column(rows, width));
 		}
-		height = 60;
-
+		height = 80;
+		columndata.get(0).setType(VarType.X);
+		columndata.get(1).setType(VarType.Y);
 		name = "NewSheet";
 		graphtitle = "NewGraph";
 
@@ -190,8 +191,10 @@ public class WholeSheet {
 	}
 	
 	public void insertColumn() {
-		//add to the last of the sheet
-		columndata.add(new Column(rows, width));
+		//add to the last of the sheet, default Y vartype generated
+		Column column = new Column(rows,width);
+		column.setType(VarType.Y);
+		columndata.add(column);
 		columns = columns + 1;
 	}
 	

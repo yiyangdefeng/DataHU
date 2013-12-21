@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -57,15 +56,16 @@ public class EditCellAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		if (convertView == null) {
-			convertView = li.inflate(R.layout.editcell, null);
-		}
+		//if (convertView == null) {
+		//	convertView = li.inflate(R.layout.editcell, null);
+		//}
 		final int row = getRow(position);
 		final int column = getColumn(position);
 
-		final View finalConvertView = convertView;
+		//final View finalConvertView = convertView;
 		final EditText et;
-		et = (EditText) convertView.findViewById(R.id.edittext);
+		et = new EditText(li.getContext());
+		//(EditText) convertView.findViewById(R.id.edittext);
 		et.setTextSize(TypedValue.COMPLEX_UNIT_PX, wholesheet.getHeight() / 2);
 		et.setHeight((int) wholesheet.getHeight());
 		et.setWidth((int) wholesheet.getWidth());
@@ -180,7 +180,7 @@ public class EditCellAdapter extends BaseAdapter {
 										newdata);
 								if (!Double.toString(newdata).equals(
 										et.getText().toString())) {
-									finalConvertView.post(new Runnable() {
+										et.post(new Runnable() {
 										@Override
 										public void run() {
 											// TODO Auto-generated method stub
@@ -194,10 +194,8 @@ public class EditCellAdapter extends BaseAdapter {
 							} catch (NumberFormatException nfe) {
 								StringWriter sw = new StringWriter();
 								PrintWriter pw = new PrintWriter(sw);
-								nfe.printStackTrace(pw);
 								pw.flush();
-								Log.e("q", sw.toString());
-								finalConvertView.post(new Runnable() {
+								et.post(new Runnable() {
 									@Override
 									public void run() {
 										et.setText("");
@@ -217,7 +215,7 @@ public class EditCellAdapter extends BaseAdapter {
 		}
 		et.refreshDrawableState();
 
-		return convertView;
+		return et;
 	}
 
 	public int getRow(int position) {

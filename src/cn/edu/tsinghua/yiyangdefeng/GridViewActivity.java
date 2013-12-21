@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -127,10 +128,51 @@ public class GridViewActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent = new Intent();
-			intent.setClass(GridViewActivity.this, MainActivity.class);
-			startActivity(intent);
-			finish();
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					GridViewActivity.this);
+			builder.setTitle("请注意");
+			builder.setMessage("如果退回主菜单，现有的数据会丢失，是否确认退出？");
+			builder.setCancelable(true);
+			builder.setNegativeButton("取消", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+
+				}
+
+			});
+			builder.setPositiveButton("确定", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					Intent intent = new Intent();
+					intent.setClass(GridViewActivity.this, MainActivity.class);
+					startActivity(intent);
+					finish();
+				}
+			});
+			builder.setNeutralButton("保存数据", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					File file = new File(Environment
+							.getExternalStorageDirectory().getName()
+							+ "/DataHU/");
+					if (!file.exists()) {
+						file.mkdir();
+					}
+					String filepath = file.getName() + wholesheet.getName()
+							+ ".csv";
+					try {
+						dm.saveFile(wholesheet, filepath);
+						Toast toast = Toast.makeText(GridViewActivity.this,
+								"保存文件" + filepath + "成功", Toast.LENGTH_LONG);
+						toast.show();
+					} catch (IOException e) {
+						Toast toast = Toast.makeText(GridViewActivity.this,
+								"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
+						toast.show();
+					}
+				}
+			});
+			builder.show();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -245,8 +287,9 @@ public class GridViewActivity extends Activity {
 				public View getView(int position, View convertView,
 						ViewGroup parent) {
 					TextView tv = new TextView(GridViewActivity.this);
+					tv.setTextSize(20);
 					tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-					tv.setWidth(40);
+					tv.setMinimumWidth(60);
 					tv.setText(String.valueOf(CommonTools
 							.ChangeNumberintoLetter(position + 1)));
 					convertView = tv;
@@ -287,7 +330,8 @@ public class GridViewActivity extends Activity {
 						ViewGroup parent) {
 					TextView tv = new TextView(GridViewActivity.this);
 					tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-					tv.setWidth(40);
+					tv.setTextSize(20);
+					tv.setMinimumWidth(60);
 					if (position == 0) {
 						tv.setText("X");
 					} else if (position == 1) {
@@ -451,6 +495,7 @@ public class GridViewActivity extends Activity {
 		session.put("yunit", yunit);
 		session.put("yname", yname);
 		session.put("graphtitle",wholesheet.getGraphTitle());
+		session.put("wholesheet", wholesheet);
 		startActivity(intent);
 		finish();
 	}
@@ -505,60 +550,70 @@ public class GridViewActivity extends Activity {
 					double firstnumber = Double.parseDouble(first);
 					if (which == 4) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.sin(firstnumber), i);
 						}
 					} else if (which == 5) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.cos(firstnumber), i);
 						}
 					} else if (which == 6) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.tan(firstnumber), i);
 						}
 					} else if (which == 7) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData((1 / firstnumber), i);
 						}
 					} else if (which == 9) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.log(firstnumber), i);
 						}
 					} else if (which == 10) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.exp(firstnumber), i);
 						}
 					} else if (which == 11) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.asin(firstnumber), i);
 						}
 					} else if (which == 12) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.acos(firstnumber), i);
 						}
 					} else if (which == 13) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.atan(firstnumber), i);
 						}
 					} else if (which == 14) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.abs(firstnumber), i);
@@ -570,7 +625,7 @@ public class GridViewActivity extends Activity {
 					int selectedcolumn = Integer.parseInt(first);
 					if (which == 4) {
 						wholesheet.insertColumn();
-
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -581,6 +636,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 5) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -591,6 +647,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 6) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -601,6 +658,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 7) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -611,6 +669,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 9) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -621,6 +680,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 10) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -631,6 +691,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 11) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -641,6 +702,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 12) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -651,6 +713,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 13) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -661,6 +724,7 @@ public class GridViewActivity extends Activity {
 						}
 					} else if (which == 14) {
 						wholesheet.insertColumn();
+						setGridWidth();
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -694,6 +758,7 @@ public class GridViewActivity extends Activity {
 				if (firstiscolumn) {
 					int selectedcolumn = Integer.parseInt(first);
 					wholesheet.insertColumn();
+					setGridWidth();
 					for (int i = 0; i < wholesheet.getRows(); i++) {
 						if (wholesheet.getColumn(selectedcolumn).getData(i) != null
 								&& wholesheet.getColumn(which).getData(i) != null) {
@@ -756,6 +821,7 @@ public class GridViewActivity extends Activity {
 				} else {
 					double firstnumber = Double.parseDouble(first);
 					wholesheet.insertColumn();
+					setGridWidth();
 					for (int i = 0; i < wholesheet.getRows(); i++) {
 						if (wholesheet.getColumn(which).getData(i) != null) {
 							switch (operator) {
@@ -848,6 +914,7 @@ public class GridViewActivity extends Activity {
 					double secondnumber = Double.parseDouble(et.getText()
 							.toString());
 					wholesheet.insertColumn();
+					setGridWidth();
 					if (firstiscolumn) {
 						int selectedcolumn = Integer.parseInt(first);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
