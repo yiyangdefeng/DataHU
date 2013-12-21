@@ -202,10 +202,8 @@ public class EditViewActivity extends Activity {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertRow(which);
-							eca.notifyDataSetChanged();
+							rowNumberInput(which);
 						}
-
 					});
 			builder.setCancelable(true);
 			builder.setNegativeButton("取消",
@@ -219,8 +217,7 @@ public class EditViewActivity extends Activity {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							wholesheet.insertRow();
-							eca.notifyDataSetChanged();
+							rowNumberInput(-1);
 						}
 					});
 			builder.show();
@@ -462,5 +459,51 @@ public class EditViewActivity extends Activity {
 			builder.show();
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	protected void rowNumberInput(final int therowbefore) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(EditViewActivity.this);
+		builder.setTitle("请输入要插入的列数");
+		final EditText et = new EditText(EditViewActivity.this);
+		et.setText(String.valueOf(1));
+		et.setFocusable(true);
+		et.setClickable(true);
+		builder.setView(et);
+		builder.setCancelable(true);
+		builder.setPositiveButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						try {
+							int newrows = Math.abs(Integer.parseInt(et.getText()
+									.toString()));
+							if (therowbefore != -1) {
+								for(int i = 0; i < newrows;i++) {
+									wholesheet.insertRow(therowbefore);
+									eca.notifyDataSetChanged();
+								}
+							}
+							else {
+								for (int i = 0;i < newrows;i++) {
+									wholesheet.insertRow();
+									eca.notifyDataSetChanged();
+							}
+							}
+						} catch (NumberFormatException nfe) {
+							Toast toast = Toast.makeText(
+									EditViewActivity.this, "您的输入有误",
+									Toast.LENGTH_SHORT);
+							toast.show();
+						}
+					}
+				});
+		builder.setNegativeButton("取消",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+		builder.show();
 	}
 }

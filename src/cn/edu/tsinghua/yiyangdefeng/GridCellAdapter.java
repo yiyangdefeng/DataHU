@@ -94,7 +94,7 @@ public class GridCellAdapter extends BaseAdapter {
 				break;
 			}
 		} else {
-			tv.setGravity(Gravity.LEFT);
+			tv.setGravity(Gravity.CENTER);
 			if (row % 2 != 0) {
 				tv.setBackgroundColor(Color.rgb(255, 255, 140));
 			} else {

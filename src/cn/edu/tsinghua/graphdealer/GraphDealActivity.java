@@ -69,7 +69,7 @@ public class GraphDealActivity extends Activity implements
 	private final static String ALBUM_PATH = Environment
 			.getExternalStorageDirectory() + "/DataHU_Figure/";
 	protected LinearLayout ll;
-	protected static final int FIGURE_VIEW = 100;
+	protected static final int FIGURE_VIEW = 0;
 	
 	@SuppressWarnings("unchecked")
 	@Override

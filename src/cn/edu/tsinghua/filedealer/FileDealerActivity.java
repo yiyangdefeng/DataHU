@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -66,6 +67,11 @@ public class FileDealerActivity extends ListActivity {
 		items.add("test3.jpg");
 		paths.add("test3path");
 		FileAdapter fa = new FileAdapter(this, items, paths);
+		for (int i = 0; i <items.size(); i++ ) {
+			Log.e("test",items.get(i));
+			Log.e("test",paths.get(i));
+		}
+		
 		setListAdapter(fa);
 	}
 

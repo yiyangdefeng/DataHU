@@ -195,7 +195,7 @@ public class GridViewActivity extends Activity {
 		switch (item.getItemId()) {
 		case SAVE:
 			File file = new File(Environment.getExternalStorageDirectory()
-					.getName() + "/DataHU");
+					.getName() + "/DataHU/");
 			file.mkdir();
 			String filepath = file.getName() + wholesheet.getName() + ".csv";
 			try {
