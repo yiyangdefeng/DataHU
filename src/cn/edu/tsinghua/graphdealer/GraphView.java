@@ -63,10 +63,18 @@ public class GraphView extends View{
 		ymin=getmin(ykey);
 		xmax=getmax(xkey);
 		xmin=getmin(xkey);
-		int[] ydtoe=doutoE((ymax-ymin)/4,2);
-		ykeysize=ydtoe[0]*Math.pow(10,ydtoe[1]-1);
-		int[] xdtoe=doutoE((xmax-xmin)/6,2);
-		xkeysize=xdtoe[0]*Math.pow(10,xdtoe[1]-1);
+		if(Math.abs(ymax-ymin)<1e-6){
+			ykeysize=1.0;
+		}else{
+			int[] ydtoe=doutoE((ymax-ymin)/4,2);
+			ykeysize=ydtoe[0]*Math.pow(10,ydtoe[1]-1);
+		}
+		if(Math.abs(xmax-xmin)<1e-6){
+			xkeysize=1;
+		}else{
+			int[] xdtoe=doutoE((xmax-xmin)/6,2);
+			xkeysize=xdtoe[0]*Math.pow(10,xdtoe[1]-1);
+			}
 		int xfen=(int)Math.round(xmax/xkeysize)-(int)Math.round(xmin/xkeysize)+2;
 		int xfenmin=(int)Math.round(xmin/xkeysize)-1;
 		int yfen=(int)Math.round(ymax/ykeysize)-(int)Math.round(ymin/ykeysize)+2;
@@ -166,10 +174,10 @@ public class GraphView extends View{
 			if(fit.resulte){
 				Point[] fitps=getpoints(fitx, fity);
 				drawline(fitps,canvas,paint);
+			}
 				drawstring(reslutstr, (int)(width*0.5), (int)(0.9*height), canvas);
 				drawstring(Rstr, (int)(width*0.5), (int)(0.95*height), canvas);
-			}else{				
-			}
+			
 		}else if(islinear){
 			if(mstyle==Mstyle.scroll){
 				drawline(canvas, paint);

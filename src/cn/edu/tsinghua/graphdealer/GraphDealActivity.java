@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
 import cn.edu.tsinghua.graphdealer.GraphView.Mstyle;
 import cn.edu.tsinghua.yiyangdefeng.GridViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.R;
@@ -25,6 +23,7 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,28 +31,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 @SuppressLint({ "SimpleDateFormat", "NewApi" })
 public class GraphDealActivity extends Activity implements
 		OnCheckedChangeListener {
-	/*
-	 * protected static final int MENU_SAVE = Menu.FIRST; protected static final
-	 * int MENU_SET_FIGURE = Menu.FIRST + 1; protected static final int
-	 * MENU_SET_XY = Menu.FIRST + 2; protected static final int MENU_DELETE =
-	 * Menu.FIRST + 3; protected static final int MENU_NO_FIT = Menu.FIRST + 4;
-	 * protected static final int MENU_YX = Menu.FIRST + 5; protected static
-	 * final int MENU_YFUNX = Menu.FIRST + 6; protected static final int
-	 * MENU_YLNX = Menu.FIRST + 7; protected static final int MENU_LNYX =
-	 * Menu.FIRST + 8; protected static final int MENU_LNYLNX = Menu.FIRST + 9;
-	 * protected static final int MENU_YABX = Menu.FIRST + 10; protected static
-	 * final int MENU_YAXB = Menu.FIRST + 11; protected static final int
-	 * MENU_SETTING = Menu.FIRST + 12;
-	 */
+	/**/
 
 	GraphView figure;
 	int inputn;
@@ -61,18 +53,17 @@ public class GraphDealActivity extends Activity implements
 	boolean[] isdelete;
 
 	EditText numofnumet, xtitle, ytitle;
-	RadioButton yesshow, noshow, showx, showy, showmain, showdetail,
-			smoothline, brockenline, noline;
-	int yesornoshow = 0, lineshow = 3, line = 2;
-	RadioGroup yornshow, showline, linear;
-	protected String graphtitle;
+	RadioButton smoothline, brockenline, noline;
+	int lineshow = 1, line = 2;
+	RadioGroup linear;
+	Spinner showline;
+	String graphtitle;
+	LinearLayout ll;
+	protected static final int FIGURE_VIEW = 0;
+
 	private final static String ALBUM_PATH = Environment
 			.getExternalStorageDirectory() + "/DataHU_Figure/";
-	protected LinearLayout ll;
-	protected static final int FIGURE_VIEW = 0;
-	
-	@SuppressWarnings("unchecked")
-	@Override
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -80,10 +71,10 @@ public class GraphDealActivity extends Activity implements
 		ll = (LinearLayout) findViewById(R.id.graphlinearlayout);
 		String xlabel;
 		String ylabel;
-		if (Session.getSession().get("xvalues") != null) {
+		if (Session.getSession().get("x") != null) {
 			Session session = Session.getSession();
-			List<Double> xvalues = (List<Double>) session.get("xvalues");
-			List<Double> yvalues = (List<Double>) session.get("yvalues");
+			x = (double[]) session.get("xvalues");
+			y = (double[]) session.get("yvalues");
 			String xunit = (String) session.get("xunit");
 			String xname = (String) session.get("xname");
 			String yunit = (String) session.get("yunit");
@@ -91,34 +82,11 @@ public class GraphDealActivity extends Activity implements
 			String graphtitle = (String) session.get("graphtitle");
 			xlabel = xname + "(" + xunit + ")";
 			ylabel = yname + "(" + yunit + ")";
-			int xcount = 0;
-			int ycount = 0;
-			for (int i = 0; i < xvalues.size(); i++) {
-				if (xvalues.get(i) != null) {
-					xcount++;
-				} else {
-					break;
-				}
-			}
-			for (int i = 0; i < yvalues.size(); i++) {
-				if (yvalues.get(i) != null) {
-					ycount++;
-				} else {
-					break;
-				}
-			}
-			int count = Math.min(xcount, ycount);
-			x = new double[count];
-
-			for (int i = 0; i < count; i++) {
-				x[i] = xvalues.get(i);
-			}
-			y = new double[count];
-			for (int i = 0; i < count; i++) {
-				y[i] = yvalues.get(i);
-			}
 			this.graphtitle = graphtitle;
 			isdelete = new boolean[x.length];
+			for (int i = 0; i < isdelete.length; i++) {
+				isdelete[i] = false;
+			}
 		}
 
 		else {
@@ -138,30 +106,13 @@ public class GraphDealActivity extends Activity implements
 		figure.setBackgroundColor(Color.WHITE);
 		figure.setMstyle(Mstyle.Line);
 		ll.addView(figure, FIGURE_VIEW);
-		
+
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
-
-		/*
-		 * menu.add(Menu.NONE, MENU_SAVE, Menu.NONE, "存储图像");
-		 * menu.add(Menu.NONE, MENU_SETTING, Menu.NONE, "格式设置");
-		 * menu.add(Menu.NONE, MENU_SET_FIGURE, Menu.NONE, "图像样式");
-		 * menu.add(Menu.NONE, MENU_SET_XY, Menu.NONE, "设置坐标轴标签");
-		 * menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "删除异常数据");
-		 * menu.add(Menu.NONE, MENU_NO_FIT, Menu.NONE, "清除拟合结果");
-		 * menu.add(Menu.NONE, MENU_YX, Menu.NONE, "y=a*x+b");
-		 * menu.add(Menu.NONE, MENU_YFUNX, Menu.NONE, "n次多项式");
-		 * menu.add(Menu.NONE, MENU_YLNX, Menu.NONE, "y=a*ln(x)+b");
-		 * menu.add(Menu.NONE, MENU_LNYX, Menu.NONE, "ln(y)=a*x+b");
-		 * menu.add(Menu.NONE, MENU_LNYLNX, Menu.NONE, "ln(y)=a*ln(x)+b");
-		 * menu.add(Menu.NONE, MENU_YABX, Menu.NONE, "y=a*b^x+c");
-		 * menu.add(Menu.NONE, MENU_YAXB, Menu.NONE, "y=a*x^b+c");
-		 */
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -188,91 +139,106 @@ public class GraphDealActivity extends Activity implements
 			}
 
 			AlertDialog.Builder saveconfirm = new AlertDialog.Builder(this);
-			saveconfirm.setTitle("图像保存");
+			saveconfirm.setTitle(R.string.menu_save);
 			saveconfirm.setMessage(saveinfo);
-			saveconfirm.setPositiveButton("确定", null);
+			saveconfirm.setPositiveButton(R.string.confirm, null);
 			saveconfirm.create();
 			saveconfirm.show();
 
 			break;
 
 		case R.id.menusetfigure:
-			/*
+
 			LayoutInflater inflater = getLayoutInflater();
 			final View layout = inflater.inflate(R.layout.graph_setfigure,
 					(ViewGroup) findViewById(R.id.graphsetfigure));
 			numofnumet = (EditText) layout.findViewById(R.id.numofnum);
-			numofnumet.setHint("已设置为" + figure.getNumofnum());
+			numofnumet.setHint(getResources().getText(R.string.numofnumhint)
+					+ " " + figure.getNumofnum());
 			numofnumet.setGravity(Gravity.CENTER_HORIZONTAL);
-			yornshow = (RadioGroup) layout.findViewById(R.id.yornshowrad);
-			yesshow = (RadioButton) layout.findViewById(R.id.yesshow);
-			noshow = (RadioButton) layout.findViewById(R.id.noshow);
-			yornshow.setOnCheckedChangeListener(this);
-			showline = (RadioGroup) layout.findViewById(R.id.showlinerad);
-			showx = (RadioButton) layout.findViewById(R.id.showx);
-			showy = (RadioButton) layout.findViewById(R.id.showy);
-			showmain = (RadioButton) layout.findViewById(R.id.showmain);
-			showdetail = (RadioButton) layout.findViewById(R.id.showdetail);
-			showline.setOnCheckedChangeListener(this);
+			showline = (Spinner) layout.findViewById(R.id.showlineselect);
+
+			final int[] selecttext = { R.string.noshow, R.string.showmain,
+					R.string.showdetail, R.string.showx, R.string.showy };
+			BaseAdapter ba = new BaseAdapter() {
+
+				public int getCount() {
+					return 5;
+				}
+
+				public Object getItem(int position) {
+					return null;
+				}
+
+				public long getItemId(int position) {
+					return 0;
+				}
+
+				public View getView(int position, View convertView,
+						ViewGroup parent) {
+					LinearLayout ll = new LinearLayout(GraphDealActivity.this);
+					ll.setOrientation(LinearLayout.HORIZONTAL);
+					TextView tv = new TextView(GraphDealActivity.this);
+					tv.setGravity(Gravity.CENTER_HORIZONTAL);
+					tv.setText(getResources().getText(selecttext[position]));
+					tv.setTextColor(Color.BLACK);
+					tv.setTextSize(20);
+					ll.addView(tv);
+					return ll;
+				}
+			};
+
+			showline.setAdapter(ba);
+			showline.setOnItemSelectedListener(new OnItemSelectedListener() {
+				public void onItemSelected(AdapterView<?> parent, View view,
+						int position, long id) {
+					LinearLayout ll = (LinearLayout) view;
+					TextView tvn = (TextView) ll.getChildAt(0);
+					if (tvn.getText().equals(
+							getResources().getText(selecttext[0]))) {
+						lineshow = 1;
+					} else if (tvn.getText().equals(
+							getResources().getText(selecttext[1]))) {
+						lineshow = 2;
+					} else if (tvn.getText().equals(
+							getResources().getText(selecttext[2]))) {
+						lineshow = 3;
+					} else if (tvn.getText().equals(
+							getResources().getText(selecttext[3]))) {
+						lineshow = 4;
+					} else if (tvn.getText().equals(
+							getResources().getText(selecttext[4]))) {
+						lineshow = 5;
+					} else {
+						lineshow = 1;
+					}
+				}
+
+				public void onNothingSelected(AdapterView<?> parent) {
+				}
+			});
+
 			linear = (RadioGroup) layout.findViewById(R.id.linearrad);
 			smoothline = (RadioButton) layout.findViewById(R.id.smoothline);
 			brockenline = (RadioButton) layout.findViewById(R.id.brokenline);
 			noline = (RadioButton) layout.findViewById(R.id.noline);
 			linear.setOnCheckedChangeListener(this);
 			if (figure.getIsshowx()) {
-				showx.setEnabled(true);
-				showy.setEnabled(true);
-				showmain.setEnabled(true);
-				showdetail.setEnabled(true);
 				if (figure.getIsshowy()) {
 					if (figure.getIsshowdetail()) {
-						yesshow.setChecked(true);
-						noshow.setChecked(false);
-						showx.setChecked(false);
-						showy.setChecked(false);
-						showmain.setChecked(false);
-						showdetail.setChecked(true);
+						showline.setSelection(2);
 					} else {
-						yesshow.setChecked(true);
-						noshow.setChecked(false);
-						showx.setChecked(false);
-						showy.setChecked(false);
-						showmain.setChecked(true);
-						showdetail.setChecked(false);
+						showline.setSelection(1);
 					}
 				} else {
-					yesshow.setChecked(true);
-					noshow.setChecked(false);
-					showx.setChecked(true);
-					showy.setChecked(false);
-					showmain.setChecked(false);
-					showdetail.setChecked(false);
+					showline.setSelection(3);
 				}
+			} else if (figure.getIsshowy()) {
+				showline.setSelection(4);
 			} else {
-				if (figure.getIsshowy()) {
-					showx.setEnabled(true);
-					showy.setEnabled(true);
-					showmain.setEnabled(true);
-					showdetail.setEnabled(true);
-					yesshow.setChecked(true);
-					noshow.setChecked(false);
-					showx.setChecked(false);
-					showy.setChecked(true);
-					showmain.setChecked(false);
-					showdetail.setChecked(false);
-				} else {
-					yesshow.setChecked(false);
-					noshow.setChecked(true);
-					showx.setChecked(false);
-					showy.setChecked(false);
-					showmain.setChecked(false);
-					showdetail.setChecked(false);
-					showx.setEnabled(false);
-					showy.setEnabled(false);
-					showmain.setEnabled(false);
-					showdetail.setEnabled(false);
-				}
+				showline.setSelection(0);
 			}
+
 			if (figure.getIslinear()) {
 				if (figure.getMstyle() == Mstyle.Line) {
 					brockenline.setChecked(true);
@@ -284,9 +250,9 @@ public class GraphDealActivity extends Activity implements
 				noline.setChecked(true);
 			}
 			AlertDialog.Builder setdialog = new AlertDialog.Builder(this);
-			setdialog.setTitle("图像样式");
+			setdialog.setTitle(R.string.menusetfigure);
 			setdialog.setView(layout);
-			setdialog.setPositiveButton("确定",
+			setdialog.setPositiveButton(R.string.confirm,
 					new DialogInterface.OnClickListener() {
 
 						@SuppressLint("NewApi")
@@ -301,35 +267,31 @@ public class GraphDealActivity extends Activity implements
 												.valueOf(numofnumstr);
 										figure.setNumofnum(intnumofnum);
 									} catch (Exception e) {
-										figure.setNumofnum(6);
 									}
 								} else {
-									figure.setNumofnum(6);
 								}
 							} catch (Exception e) {
 
 							}
-							if (yesornoshow == 1) {
-								if (lineshow == 1) {
-									figure.setIsshowx(true);
-									figure.setIsshowy(false);
-									figure.setIsshowdetail(false);
-								} else if (lineshow == 2) {
-									figure.setIsshowx(false);
-									figure.setIsshowy(true);
-									figure.setIsshowdetail(false);
-								} else if (lineshow == 4) {
-									figure.setIsshowx(true);
-									figure.setIsshowy(true);
-									figure.setIsshowdetail(true);
-								} else {
-									figure.setIsshowx(true);
-									figure.setIsshowy(true);
-									figure.setIsshowdetail(false);
-								}
-							} else {
+							if (lineshow == 1) {
 								figure.setIsshowx(false);
 								figure.setIsshowy(false);
+								figure.setIsshowdetail(false);
+							} else if (lineshow == 3) {
+								figure.setIsshowx(true);
+								figure.setIsshowy(true);
+								figure.setIsshowdetail(true);
+							} else if (lineshow == 4) {
+								figure.setIsshowx(true);
+								figure.setIsshowy(false);
+								figure.setIsshowdetail(false);
+							} else if (lineshow == 5) {
+								figure.setIsshowx(false);
+								figure.setIsshowy(true);
+								figure.setIsshowdetail(false);
+							} else {
+								figure.setIsshowx(true);
+								figure.setIsshowy(true);
 								figure.setIsshowdetail(false);
 							}
 
@@ -342,7 +304,8 @@ public class GraphDealActivity extends Activity implements
 								figure.setIslinear(true);
 								figure.setMstyle(Mstyle.Line);
 							}
-							ll.removeViewAt(FIGURE_VIEW);\ll.addView(figure, FIGURE_VIEW);
+							ll.removeViewAt(FIGURE_VIEW);
+							ll.addView(figure, FIGURE_VIEW);
 
 						}
 
@@ -350,7 +313,7 @@ public class GraphDealActivity extends Activity implements
 			setdialog.create();
 			setdialog.show();
 
-			break;*/
+			break;
 
 		case R.id.menusetxy:
 
@@ -365,9 +328,9 @@ public class GraphDealActivity extends Activity implements
 			xtitle.setText(figure.getXstr());
 			ytitle.setText(figure.getYstr());
 			AlertDialog.Builder inputxy = new AlertDialog.Builder(this);
-			inputxy.setTitle("坐标轴标签");
+			inputxy.setTitle(R.string.menusetxy);
 			inputxy.setView(layoutsetxy);
-			inputxy.setPositiveButton("确定",
+			inputxy.setPositiveButton(R.string.confirm,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -386,8 +349,7 @@ public class GraphDealActivity extends Activity implements
 								}
 							} catch (Exception e) {
 							}
-							ll.removeViewAt(FIGURE_VIEW);
-							ll.addView(figure, FIGURE_VIEW);
+							setContentView(figure);
 						}
 
 					});
@@ -400,7 +362,7 @@ public class GraphDealActivity extends Activity implements
 			String[] xy = new String[x.length];
 			final boolean[] chosed = new boolean[xy.length];
 			for (int i = 0; i < x.length; i++) {
-				xy[i] = "   (" + x[i] + " , " + y[i] + " )";
+				xy[i] = "     (" + x[i] + " , " + y[i] + " )";
 			}
 
 			for (int i = 0; i < isdelete.length; i++) {
@@ -412,7 +374,7 @@ public class GraphDealActivity extends Activity implements
 			}
 
 			new AlertDialog.Builder(this)
-					.setTitle("选中要剔除的数据")
+					.setTitle(R.string.deletetext)
 					.setMultiChoiceItems(xy, chosed,
 							new DialogInterface.OnMultiChoiceClickListener() {
 
@@ -426,7 +388,7 @@ public class GraphDealActivity extends Activity implements
 									}
 								}
 							})
-					.setPositiveButton("确定剔除",
+					.setPositiveButton(R.string.deleteconfirm,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -442,22 +404,28 @@ public class GraphDealActivity extends Activity implements
 										}
 									}
 									int j = 0;
-									dx = new double[numfalse];
-									dy = new double[numfalse];
-									for (int i = 0; i < isdelete.length; i++) {
-										if (!isdelete[i]) {
-											dx[j] = x[i];
-											dy[j] = y[i];
-											j = j + 1;
+									if (numfalse == 0) {
+										dx = new double[1];
+										dy = new double[1];
+										dx[0] = 0;
+										dy[0] = 0;
+									} else {
+										dx = new double[numfalse];
+										dy = new double[numfalse];
+										for (int i = 0; i < isdelete.length; i++) {
+											if (!isdelete[i]) {
+												dx[j] = x[i];
+												dy[j] = y[i];
+												j = j + 1;
+											}
 										}
 									}
 									figure.setXkey(dx);
 									figure.setYkey(dy);
-									ll.removeViewAt(FIGURE_VIEW);
-									ll.addView(figure, FIGURE_VIEW);
+									setContentView(figure);
 								}
 							})
-					.setNegativeButton("清空选中",
+					.setNegativeButton(R.string.deletecancel,
 							new DialogInterface.OnClickListener() {
 
 								@Override
@@ -468,8 +436,7 @@ public class GraphDealActivity extends Activity implements
 									}
 									figure.setXkey(x);
 									figure.setYkey(y);
-									ll.removeViewAt(FIGURE_VIEW);
-									ll.addView(figure, FIGURE_VIEW);
+									setContentView(figure);
 								}
 							}).show();
 
@@ -478,25 +445,25 @@ public class GraphDealActivity extends Activity implements
 		case R.id.menunofit:
 
 			figure.setIsfitting(false);
-			;
+			setContentView(figure);
 			break;
 
 		case R.id.menuyx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(1);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 
 		case R.id.menuyfunx:
 
 			final EditText inputServer = new EditText(this);
-			inputServer.setHint("建议n大于0");
+			inputServer.setGravity(Gravity.CENTER_HORIZONTAL);
+			inputServer.setHint(R.string.yfunxhint);
 			inputServer.setInputType(InputType.TYPE_CLASS_NUMBER);
-			AlertDialog.Builder inputdialog = new AlertDialog.Builder(GraphDealActivity.this);
-			inputdialog.setTitle("请输入次数n");
+			AlertDialog.Builder inputdialog = new AlertDialog.Builder(this);
+			inputdialog.setTitle(R.string.yfunxtitle);
 			inputdialog.setView(inputServer);
-			inputdialog.setPositiveButton("确定",
+			inputdialog.setPositiveButton(R.string.confirm,
 					new DialogInterface.OnClickListener() {
 
 						public void onClick(DialogInterface dialog, int which) {
@@ -514,8 +481,7 @@ public class GraphDealActivity extends Activity implements
 								figure.setIsfitting(true);
 								figure.setFittingtype(2);
 								figure.setNumofpara(inputn + 1);
-								ll.removeViewAt(FIGURE_VIEW);
-								ll.addView(figure, FIGURE_VIEW);
+								setContentView(figure);
 							} else {
 							}
 						}
@@ -528,33 +494,28 @@ public class GraphDealActivity extends Activity implements
 		case R.id.menuylnx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(3);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 		case R.id.menulnyx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(4);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 		case R.id.menulnylnx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(5);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 
 		case R.id.menuyabx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(6);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 		case R.id.menuyaxb:
 			figure.setIsfitting(true);
 			figure.setFittingtype(7);
-			ll.removeViewAt(FIGURE_VIEW);
-			ll.addView(figure, FIGURE_VIEW);
+			setContentView(figure);
 			break;
 		}
 		return true;
@@ -581,43 +542,6 @@ public class GraphDealActivity extends Activity implements
 
 	@Override
 	public void onCheckedChanged(RadioGroup arg0, int arg1) {
-		if (arg0 == yornshow) {
-			if (arg1 == yesshow.getId()) {
-				yesornoshow = 1;
-				showx.setEnabled(true);
-				showy.setEnabled(true);
-				showmain.setEnabled(true);
-				showdetail.setEnabled(true);
-				showmain.setChecked(true);
-			} else if (arg1 == noshow.getId()) {
-				yesornoshow = 0;
-				showx.setChecked(false);
-				showy.setChecked(false);
-				showmain.setChecked(false);
-				showdetail.setChecked(false);
-				showx.setEnabled(false);
-				showy.setEnabled(false);
-				showmain.setEnabled(false);
-				showdetail.setEnabled(false);
-			}
-
-		}
-		if (arg0 == showline) {
-			if (arg1 == showx.getId()) {
-				lineshow = 1;
-				yesshow.setChecked(true);
-			} else if (arg1 == showy.getId()) {
-				lineshow = 2;
-				yesshow.setChecked(true);
-			} else if (arg1 == showdetail.getId()) {
-				lineshow = 4;
-				yesshow.setChecked(true);
-			} else if (arg1 == showmain.getId()) {
-				lineshow = 3;
-				yesshow.setChecked(true);
-			}
-
-		}
 		if (arg0 == linear) {
 			if (arg1 == smoothline.getId()) {
 				line = 1;
@@ -628,6 +552,7 @@ public class GraphDealActivity extends Activity implements
 			}
 
 		}
+
 	}
 
 	@Override

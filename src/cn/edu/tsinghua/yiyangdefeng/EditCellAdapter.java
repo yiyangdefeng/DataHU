@@ -151,7 +151,7 @@ public class EditCellAdapter extends BaseAdapter {
 			if (wholesheet.columndata.get(column - EXTRACOLUMNS).getData(
 					row - EXTRAROWS) != null) {
 				DecimalFormat df = new DecimalFormat();
-				df.setMaximumFractionDigits(3);
+				df.setMaximumFractionDigits(wholesheet.getDigit());
 				et.setText(df.format(wholesheet.columndata.get(
 						column - EXTRACOLUMNS).getData(row - EXTRAROWS)));
 			} else {
@@ -185,7 +185,7 @@ public class EditCellAdapter extends BaseAdapter {
 										public void run() {
 											// TODO Auto-generated method stub
 											DecimalFormat df = new DecimalFormat();
-											df.setMaximumFractionDigits(3);
+											df.setMaximumFractionDigits(wholesheet.getDigit());
 											et.setText(df.format(newdata));
 										}
 

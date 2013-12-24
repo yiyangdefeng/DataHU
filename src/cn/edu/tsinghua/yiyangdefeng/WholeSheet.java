@@ -6,6 +6,7 @@ import java.util.List;
 public class WholeSheet {
 	protected int columns;
 	protected int rows;
+	protected int digit;
 	protected float height;
 	protected float width;
 	protected String name;
@@ -16,6 +17,7 @@ public class WholeSheet {
 		columns = 2;
 		rows = 30;
 		width = 300;
+		digit = 3;
 		columndata = new ArrayList<Column>();
 		for (int i = 0; i < columns; i++) {
 			columndata.add(new Column(rows, width));
@@ -54,6 +56,13 @@ public class WholeSheet {
 		this.graphtitle = graphtitle;
 	}
 
+	public int getDigit() {
+		return this.digit;
+	}
+	
+	public void setDigit(int digit) {
+		this.digit = digit;
+	}
 	public float getWidth() {
 		return this.width;
 	}

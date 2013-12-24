@@ -17,12 +17,10 @@ public class GridCellAdapter extends BaseAdapter {
 	protected static final int EXTRAROWS = 4;
 	private LayoutInflater li;
 	protected WholeSheet wholesheet;
-	protected int digit;
-
-	public GridCellAdapter(Context context, WholeSheet wholesheet, int digit) {
+	
+	public GridCellAdapter(Context context, WholeSheet wholesheet) {
 		li = LayoutInflater.from(context);
 		this.wholesheet = wholesheet;
-		this.digit = digit;
 	}
 
 	@Override
@@ -101,7 +99,7 @@ public class GridCellAdapter extends BaseAdapter {
 				tv.setBackgroundColor(Color.WHITE);
 			}
 			DecimalFormat df = new DecimalFormat();
-			df.setMaximumFractionDigits(digit);
+			df.setMaximumFractionDigits(wholesheet.getDigit());
 			if (wholesheet.getColumn(column - EXTRACOLUMNS).getData(
 					row - EXTRAROWS) != null) {
 				tv.setText(df.format(wholesheet
@@ -120,9 +118,5 @@ public class GridCellAdapter extends BaseAdapter {
 
 	public int getColumn(int position) {
 		return (position % (wholesheet.getColumns() + EXTRACOLUMNS));
-	}
-
-	public void setDigit(int digit) {
-		this.digit = digit;
-	}
+	}	
 }

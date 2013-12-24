@@ -48,7 +48,6 @@ public class GridViewActivity extends Activity {
 	public static final int RETURN_EDITMODE = Menu.FIRST + 4;
 	public static final int DRAW = Menu.FIRST + 5;
 	protected TextView titletv;
-	protected int digit = 3;
 	protected GridCellAdapter gca;
 	protected int tempcolumn;
 	protected int tempvartype = 0;
@@ -94,8 +93,7 @@ public class GridViewActivity extends Activity {
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
-					digit);
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
@@ -104,8 +102,7 @@ public class GridViewActivity extends Activity {
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
 			setGridWidth();
-			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
-					digit);
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
 			
 			fm.addView(mygridview);
@@ -117,8 +114,7 @@ public class GridViewActivity extends Activity {
 					+ EditCellAdapter.EXTRACOLUMNS);
 
 			setGridWidth();
-			gca = new GridCellAdapter(getApplicationContext(), wholesheet,
-					digit);
+			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
@@ -216,7 +212,7 @@ public class GridViewActivity extends Activity {
 			builder = new AlertDialog.Builder(GridViewActivity.this);
 			builder.setTitle("请输入小数位数，范围0~6");
 			final EditText et = new EditText(GridViewActivity.this);
-			et.setText(String.valueOf(digit));
+			et.setText(String.valueOf(wholesheet.getDigit()));
 			et.setFocusable(true);
 			et.setClickable(true);
 			builder.setView(et);
@@ -234,7 +230,7 @@ public class GridViewActivity extends Activity {
 											Toast.LENGTH_SHORT);
 									toast.show();
 								} else {
-									gca.setDigit(newdigit);
+									wholesheet.setDigit(newdigit);
 									gca.notifyDataSetChanged();
 								}
 							} catch (NumberFormatException nfe) {
@@ -478,26 +474,56 @@ public class GridViewActivity extends Activity {
 	}
 
 	public void gotoDrawMode() {
-		Intent intent = new Intent();
-		intent.setClass(GridViewActivity.this, GraphDealActivity.class);
-		List<Double> xvalues = wholesheet.getColumn(drawX).getAllData();
-		List<Double> yvalues = wholesheet.getColumn(drawY).getAllData();
-		String xunit = wholesheet.getColumn(drawX).getUnit();
-		String xname = wholesheet.getColumn(drawX).getNotes();
-		String yunit = wholesheet.getColumn(drawY).getUnit();
-		String yname = wholesheet.getColumn(drawY).getNotes();
-		Session.getSession().cleanUpSession();
-		Session session = Session.getSession();
-		session.put("xvalues", xvalues);
-		session.put("yvalues", yvalues);
-		session.put("xunit", xunit);
-		session.put("xname", xname);
-		session.put("yunit", yunit);
-		session.put("yname", yname);
-		session.put("graphtitle",wholesheet.getGraphTitle());
-		session.put("wholesheet", wholesheet);
-		startActivity(intent);
-		finish();
+		List<Double> rawxvalues = wholesheet.getColumn(drawX).getAllData();
+		List<Double> rawyvalues = wholesheet.getColumn(drawY).getAllData();
+		for (int i = 0;i < rawxvalues.size();i++) {
+			if(rawxvalues.get(i) == null || rawyvalues.get(i) == null) {
+				rawxvalues.remove(i);
+				rawyvalues.remove(i);
+			}
+		}
+		if (rawxvalues.size() == 0 || rawyvalues.size() == 0) {
+			Toast toast = Toast.makeText(GridViewActivity.this, "选定的两行中找不到有效数据，请检查输入", Toast.LENGTH_LONG);
+			toast.show();
+		}
+		else {
+			double[] xvalues = new double[rawxvalues.size()];
+			double[] yvalues = new double[rawxvalues.size()];
+			for (int i = 0; i < rawxvalues.size();i++) {
+				xvalues[i] = rawxvalues.get(i);
+				yvalues[i] = rawyvalues.get(i);
+			}
+			for(int i = 0; i < xvalues.length;i++) {
+				for (int j = i + 1; i < xvalues.length;i++) {
+					if(xvalues[i] > xvalues[j]) {
+						double tempx = xvalues[i];
+						xvalues[i] = xvalues[j];
+						xvalues[j] = tempx;
+						double tempy = yvalues[i];
+						yvalues[i] = yvalues[j];
+						yvalues[j] = tempy;
+					}
+				}
+			}
+			Intent intent = new Intent();
+			intent.setClass(GridViewActivity.this, GraphDealActivity.class);
+			String xunit = wholesheet.getColumn(drawX).getUnit();
+			String xname = wholesheet.getColumn(drawX).getNotes();
+			String yunit = wholesheet.getColumn(drawY).getUnit();
+			String yname = wholesheet.getColumn(drawY).getNotes();
+			Session.getSession().cleanUpSession();
+			Session session = Session.getSession();
+			session.put("xvalues", xvalues);
+			session.put("yvalues", yvalues);
+			session.put("xunit", xunit);
+			session.put("xname", xname);
+			session.put("yunit", yunit);
+			session.put("yname", yname);
+			session.put("graphtitle",wholesheet.getGraphTitle());
+			session.put("wholesheet", wholesheet);
+			startActivity(intent);
+			finish();
+		}
 	}
 
 	public void openychoice() {
