@@ -1,6 +1,5 @@
 package cn.edu.tsinghua.filedealer;
 
-import java.io.File;
 import java.util.List;
 
 import android.annotation.SuppressLint;

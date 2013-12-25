@@ -2,6 +2,7 @@ package cn.edu.tsinghua.graphdealer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -123,7 +124,7 @@ public class GraphDealActivity extends Activity implements
 				figure.setDrawingCacheEnabled(true);
 			}
 			Bitmap bitmap = figure.getDrawingCache();
-			try {
+			//try {
 				Date date = new Date();
 				SimpleDateFormat time = new SimpleDateFormat(
 						"yyyy_MM_dd_HH_mm_ss");
@@ -133,10 +134,10 @@ public class GraphDealActivity extends Activity implements
 					saveinfo = "Success in Saving " + filename + " at "
 							+ ALBUM_PATH;
 				}
-			} catch (IOException e) {
-				saveinfo = "The External Storage can not be used now OR other problem.";
-				e.printStackTrace();
-			}
+			//} catch (IOException e) {
+			//	saveinfo = "The External Storage can not be used now OR other problem.";
+			//	e.printStackTrace();
+			//}
 
 			AlertDialog.Builder saveconfirm = new AlertDialog.Builder(this);
 			saveconfirm.setTitle(R.string.menu_save);
@@ -349,7 +350,8 @@ public class GraphDealActivity extends Activity implements
 								}
 							} catch (Exception e) {
 							}
-							setContentView(figure);
+							ll.removeViewAt(FIGURE_VIEW);
+							ll.addView(figure, FIGURE_VIEW);
 						}
 
 					});
@@ -422,7 +424,8 @@ public class GraphDealActivity extends Activity implements
 									}
 									figure.setXkey(dx);
 									figure.setYkey(dy);
-									setContentView(figure);
+									ll.removeViewAt(FIGURE_VIEW);
+									ll.addView(figure, FIGURE_VIEW);
 								}
 							})
 					.setNegativeButton(R.string.deletecancel,
@@ -436,7 +439,8 @@ public class GraphDealActivity extends Activity implements
 									}
 									figure.setXkey(x);
 									figure.setYkey(y);
-									setContentView(figure);
+									ll.removeViewAt(FIGURE_VIEW);
+									ll.addView(figure, FIGURE_VIEW);
 								}
 							}).show();
 
@@ -445,13 +449,15 @@ public class GraphDealActivity extends Activity implements
 		case R.id.menunofit:
 
 			figure.setIsfitting(false);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 
 		case R.id.menuyx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(1);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 
 		case R.id.menuyfunx:
@@ -481,7 +487,8 @@ public class GraphDealActivity extends Activity implements
 								figure.setIsfitting(true);
 								figure.setFittingtype(2);
 								figure.setNumofpara(inputn + 1);
-								setContentView(figure);
+								ll.removeViewAt(FIGURE_VIEW);
+								ll.addView(figure, FIGURE_VIEW);
 							} else {
 							}
 						}
@@ -494,34 +501,39 @@ public class GraphDealActivity extends Activity implements
 		case R.id.menuylnx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(3);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 		case R.id.menulnyx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(4);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 		case R.id.menulnylnx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(5);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 
 		case R.id.menuyabx:
 			figure.setIsfitting(true);
 			figure.setFittingtype(6);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 		case R.id.menuyaxb:
 			figure.setIsfitting(true);
 			figure.setFittingtype(7);
-			setContentView(figure);
+			ll.removeViewAt(FIGURE_VIEW);
+			ll.addView(figure, FIGURE_VIEW);
 			break;
 		}
 		return true;
 	}
 
-	public Boolean saveFile(Bitmap bm, String fileName) throws IOException {
+	public Boolean saveFile(Bitmap bm, String fileName) {
 		File dirFile = new File(ALBUM_PATH);
 		fileName = fileName.replace("/", "_");
 		if (!dirFile.exists()) {
@@ -532,12 +544,19 @@ public class GraphDealActivity extends Activity implements
 		Bitmap bigbm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
 				bm.getHeight(), matrix, true);
 		File myCaptureFile = new File(ALBUM_PATH + fileName);
-		BufferedOutputStream bos = new BufferedOutputStream(
-				new FileOutputStream(myCaptureFile));
-		Boolean b = bigbm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-		bos.flush();
-		bos.close();
-		return b;
+		BufferedOutputStream bos;
+		try {
+			bos = new BufferedOutputStream(
+					new FileOutputStream(myCaptureFile));
+			Boolean b = bigbm.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+			bos.flush();
+			bos.close();
+			return b;
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

@@ -480,6 +480,7 @@ public class GridViewActivity extends Activity {
 			if(rawxvalues.get(i) == null || rawyvalues.get(i) == null) {
 				rawxvalues.remove(i);
 				rawyvalues.remove(i);
+				i--;
 			}
 		}
 		if (rawxvalues.size() == 0 || rawyvalues.size() == 0) {
