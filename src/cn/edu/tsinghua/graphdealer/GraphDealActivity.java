@@ -2,9 +2,7 @@ package cn.edu.tsinghua.graphdealer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import cn.edu.tsinghua.graphdealer.GraphView.Mstyle;
@@ -43,6 +41,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint({ "SimpleDateFormat", "NewApi" })
 public class GraphDealActivity extends Activity implements
@@ -96,7 +95,8 @@ public class GraphDealActivity extends Activity implements
 		else {
 			// just an example
 			x = new double[16];
-			y = new double[x.length];
+			y = new double[x.
+			               length];
 			isdelete = new boolean[x.length];
 			for (int i = 0; i < x.length; i++) {
 				x[i] = i + 1;
@@ -555,10 +555,11 @@ public class GraphDealActivity extends Activity implements
 			bos.flush();
 			bos.close();
 			return b;
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Toast toast = Toast.makeText(GraphDealActivity.this, "很抱歉，存储文件出错，请联系开发人员。",Toast.LENGTH_LONG);
+			toast.show();
+			return false;
 		}
 	}
 

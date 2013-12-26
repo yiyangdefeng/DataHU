@@ -6,7 +6,6 @@ import java.text.DecimalFormat;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -140,7 +139,8 @@ public class EditCellAdapter extends BaseAdapter {
 		} else {
 			et.setFocusable(true);
 			et.setClickable(true);
-			et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			//InputType.TYPE_NUMBER_VARIATION_NORMAL;
+			//et.setInputType(InputType.TYPE_NUMBER_VARIATION_NORMAL);
 			final boolean iseven;
 			if (row % 2 == 0) {
 				et.setBackgroundColor(Color.WHITE);

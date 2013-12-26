@@ -2,6 +2,7 @@ package cn.edu.tsinghua.yiyangdefeng;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -72,12 +73,12 @@ public class DataManager {
 	}
 	
 	//saving format:
-	//row 0 : columns,XXX,rows,XXX,width,XXX,height,XXX,dataname,XXX,graphtitle,XXX
+	//row 0 : columns,XXX,rows,XXX,width,XXX,height,XXX,dataname,XXX,graphtitle,XXX,digit,XXX
 	//row 1 : instruction of each column 
 	//row 2 : unit of each column
 	//row 3 : type of each column
-	public void saveFile (WholeSheet wholesheet,String filepath) throws IOException {
-		BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
+	public void saveFile (WholeSheet wholesheet,File filename) throws IOException {
+		BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
 		bw.write("columns,");
 		bw.write(String.valueOf(wholesheet.getColumns()) + ",");
 		bw.write("rows,");
@@ -90,6 +91,8 @@ public class DataManager {
 		bw.write(wholesheet.getName() + ",");
 		bw.write("graphtitle,");
 		bw.write(wholesheet.getGraphTitle());
+		bw.write("digit,");
+		bw.write(String.valueOf(wholesheet.getDigit()));
 		bw.write("\n");
 		int columns = wholesheet.getColumns();
 		int rows = wholesheet.getRows();

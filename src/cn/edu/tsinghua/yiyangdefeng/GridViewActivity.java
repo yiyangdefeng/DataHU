@@ -1,7 +1,6 @@
 package cn.edu.tsinghua.yiyangdefeng;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +62,10 @@ public class GridViewActivity extends Activity {
 	protected boolean firstiscolumn;
 	protected int drawX;
 	protected int drawY;
+	protected final static String FOLDER_PATH = Environment
+			.getExternalStorageDirectory() + "/DataHU/";
+	protected final static String DATA_PATH = Environment
+			.getExternalStorageDirectory() + "/DataHU/Data/";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -148,24 +151,7 @@ public class GridViewActivity extends Activity {
 			builder.setNeutralButton("保存数据", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
-					File file = new File(Environment
-							.getExternalStorageDirectory().getName()
-							+ "/DataHU/");
-					if (!file.exists()) {
-						file.mkdir();
-					}
-					String filepath = file.getName() + wholesheet.getName()
-							+ ".csv";
-					try {
-						dm.saveFile(wholesheet, filepath);
-						Toast toast = Toast.makeText(GridViewActivity.this,
-								"保存文件" + filepath + "成功", Toast.LENGTH_LONG);
-						toast.show();
-					} catch (IOException e) {
-						Toast toast = Toast.makeText(GridViewActivity.this,
-								"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
-						toast.show();
-					}
+					saveFile();
 				}
 			});
 			builder.show();
@@ -190,20 +176,7 @@ public class GridViewActivity extends Activity {
 		AlertDialog.Builder builder;
 		switch (item.getItemId()) {
 		case SAVE:
-			File file = new File(Environment.getExternalStorageDirectory()
-					.getName() + "/DataHU/");
-			file.mkdir();
-			String filepath = file.getName() + wholesheet.getName() + ".csv";
-			try {
-				dm.saveFile(wholesheet, filepath);
-				Toast toast = Toast.makeText(GridViewActivity.this, "保存文件"
-						+ filepath + "成功", Toast.LENGTH_LONG);
-				toast.show();
-			} catch (IOException e) {
-				Toast toast = Toast.makeText(GridViewActivity.this,
-						"很抱歉，存储文件出错！", Toast.LENGTH_LONG);
-				toast.show();
-			}
+			saveFile();
 			return true;
 		case RETURN_EDITMODE:
 			gotoEditMode();
@@ -1072,5 +1045,27 @@ public class GridViewActivity extends Activity {
 			}
 		});
 		builder.show();
+	}
+	public Boolean saveFile() {
+		File folderfile = new File(FOLDER_PATH);
+		String fileName = wholesheet.getName() + ".csv";
+		if (!folderfile.exists()) {
+			folderfile.mkdir();
+		}
+		File datafile = new File(DATA_PATH);
+		if (!datafile.exists()) {
+			datafile.mkdir();
+		}
+		File datasavefile = new File(DATA_PATH + fileName);
+		
+		try {
+			dm.saveFile(wholesheet, datasavefile);	
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			Toast toast = Toast.makeText(GridViewActivity.this, "很抱歉，存储文件出错，请联系开发人员。",Toast.LENGTH_LONG);
+			toast.show();
+			return false;
+		}
 	}
 }
