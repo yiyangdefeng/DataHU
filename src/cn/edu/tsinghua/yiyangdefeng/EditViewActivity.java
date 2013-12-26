@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class EditViewActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		dm = new DataManager();
 		setContentView(R.layout.data_editview);
 		mygridview = new MyGridView(this);
@@ -69,8 +71,8 @@ public class EditViewActivity extends Activity {
 			wholesheet = (WholeSheet) Session.getSession().get("wholesheet");
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
-
 			setGridWidth();
+			eca = new EditCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(new EditCellAdapter(getApplicationContext(),
 					wholesheet));
 			fm.addView(mygridview);

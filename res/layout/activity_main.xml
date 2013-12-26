@@ -13,12 +13,18 @@
         android:textColor="#FFF"
         android:textSize="20dp" />
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/picture" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="   欢迎使用DATAHU\n(Data Helper for You!)"
+        android:text="   欢迎使用DataHU\n(Data Helper for You!)"
         android:textColor="#F00"
         android:textSize="20dp" />
     
@@ -40,18 +46,11 @@
             android:text="新建表格"
             android:textSize="20dp" />
 
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="30dp" >
-
         <Button
             android:id="@+id/loadsheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
             android:text="读取表格"
             android:textSize="20dp" />
 
@@ -70,18 +69,11 @@
             android:text="使用帮助"
             android:textSize="20dp" />
 
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="30dp" >
-
         <Button
             android:id="@+id/exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
             android:text="退出软件"
             android:textSize="20dp" />
 

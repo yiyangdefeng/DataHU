@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -68,6 +69,7 @@ public class GridViewActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		dm = new DataManager();
 		setContentView(R.layout.data_gridview);
 		mygridview = new MyGridView(this);
@@ -84,9 +86,8 @@ public class GridViewActivity extends Activity {
 				.findViewById(R.id.columnchoicespinner);
 		vartypechoicespinner = (Spinner) this
 				.findViewById(R.id.vartypechoicespinner);
-		FrameLayout fm = (FrameLayout) this
-				.findViewById(R.id.grid_framelayout);
-		
+		FrameLayout fm = (FrameLayout) this.findViewById(R.id.grid_framelayout);
+
 		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
@@ -104,11 +105,10 @@ public class GridViewActivity extends Activity {
 			setGridWidth();
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
-			
+
 			fm.addView(mygridview);
 			titletv.setText("数据查看处理界面-" + wholesheet.getName());
 		} else {
-			Log.e("test","wrong branch");
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
 					+ EditCellAdapter.EXTRACOLUMNS);
@@ -430,8 +430,8 @@ public class GridViewActivity extends Activity {
 					currentxcolumnnumber.add(i);
 				}
 			}
-			String[] currentxcolumnname = new String [currentxcolumnlist.size()];
-			for(int i = 0;i < currentxcolumnlist.size(); i++) {
+			String[] currentxcolumnname = new String[currentxcolumnlist.size()];
+			for (int i = 0; i < currentxcolumnlist.size(); i++) {
 				currentxcolumnname[i] = currentxcolumnlist.get(i);
 			}
 			builder.setItems(currentxcolumnname,
@@ -474,29 +474,36 @@ public class GridViewActivity extends Activity {
 	}
 
 	public void gotoDrawMode() {
-		List<Double> rawxvalues = wholesheet.getColumn(drawX).getAllData();
-		List<Double> rawyvalues = wholesheet.getColumn(drawY).getAllData();
-		for (int i = 0;i < rawxvalues.size();i++) {
-			if(rawxvalues.get(i) == null || rawyvalues.get(i) == null) {
-				rawxvalues.remove(i);
-				rawyvalues.remove(i);
-				i--;
+		List<Double> rawxvalues = new ArrayList<Double>();
+		List<Double> rawyvalues = new ArrayList<Double>();
+		for (int i = 0; i < wholesheet.getRows(); i++) {
+			Double xvalue = wholesheet.getColumn(drawX).getData(i);
+			Double yvalue = wholesheet.getColumn(drawY).getData(i);
+			if (xvalue != null && yvalue != null
+					&& xvalue != Double.POSITIVE_INFINITY
+					&& yvalue != Double.POSITIVE_INFINITY
+					&& xvalue != Double.NEGATIVE_INFINITY
+					&& yvalue != Double.NEGATIVE_INFINITY
+					&& xvalue != Double.NaN && yvalue != Double.NaN) {
+				rawxvalues.add(xvalue);
+				rawyvalues.add(yvalue);
 			}
+
 		}
 		if (rawxvalues.size() == 0 || rawyvalues.size() == 0) {
-			Toast toast = Toast.makeText(GridViewActivity.this, "选定的两行中找不到有效数据，请检查输入", Toast.LENGTH_LONG);
+			Toast toast = Toast.makeText(GridViewActivity.this,
+					"选定的两行中找不到有效数据，请检查输入", Toast.LENGTH_LONG);
 			toast.show();
-		}
-		else {
+		} else {
 			double[] xvalues = new double[rawxvalues.size()];
 			double[] yvalues = new double[rawxvalues.size()];
-			for (int i = 0; i < rawxvalues.size();i++) {
+			for (int i = 0; i < rawxvalues.size(); i++) {
 				xvalues[i] = rawxvalues.get(i);
 				yvalues[i] = rawyvalues.get(i);
 			}
-			for(int i = 0; i < xvalues.length;i++) {
-				for (int j = i + 1; i < xvalues.length;i++) {
-					if(xvalues[i] > xvalues[j]) {
+			for (int i = 0; i < xvalues.length; i++) {
+				for (int j = i + 1; j < xvalues.length; j++) {
+					if (xvalues[i] > xvalues[j]) {
 						double tempx = xvalues[i];
 						xvalues[i] = xvalues[j];
 						xvalues[j] = tempx;
@@ -506,6 +513,10 @@ public class GridViewActivity extends Activity {
 					}
 				}
 			}
+			for (int i = 0; i < xvalues.length;i++) {
+				Log.e("test",xvalues[i] + "," + yvalues[i]);
+			}
+			
 			Intent intent = new Intent();
 			intent.setClass(GridViewActivity.this, GraphDealActivity.class);
 			String xunit = wholesheet.getColumn(drawX).getUnit();
@@ -520,7 +531,7 @@ public class GridViewActivity extends Activity {
 			session.put("xname", xname);
 			session.put("yunit", yunit);
 			session.put("yname", yname);
-			session.put("graphtitle",wholesheet.getGraphTitle());
+			session.put("graphtitle", wholesheet.getGraphTitle());
 			session.put("wholesheet", wholesheet);
 			startActivity(intent);
 			finish();
@@ -540,8 +551,8 @@ public class GridViewActivity extends Activity {
 				currentycolumnnumber.add(i);
 			}
 		}
-		String[] currentycolumnname = new String [currentycolumnlist.size()];
-		for(int i = 0;i < currentycolumnlist.size(); i++) {
+		String[] currentycolumnname = new String[currentycolumnlist.size()];
+		for (int i = 0; i < currentycolumnlist.size(); i++) {
 			currentycolumnname[i] = currentycolumnlist.get(i);
 		}
 		builder.setItems(currentycolumnname,

@@ -8,8 +8,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
@@ -26,7 +28,8 @@ public class MainActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		setContentView(R.layout.activity_main);
 		createsheet = (Button) this.findViewById(R.id.createsheet);
 		loadsheet = (Button) this.findViewById(R.id.loadsheet);
@@ -94,19 +97,19 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onRestart() {
-		// TODO Auto-generated method stub
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		super.onRestart();
 	}
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		super.onResume();
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
 		super.onStart();
 	}
 }

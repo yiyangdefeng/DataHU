@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
@@ -68,11 +69,13 @@ public class GraphDealActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 		setContentView(R.layout.graphview);
 		ll = (LinearLayout) findViewById(R.id.graphlinearlayout);
 		String xlabel;
 		String ylabel;
-		if (Session.getSession().get("x") != null) {
+		if (Session.getSession().get("xvalues") != null) {
 			Session session = Session.getSession();
 			x = (double[]) session.get("xvalues");
 			y = (double[]) session.get("yvalues");

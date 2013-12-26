@@ -16,8 +16,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="right"
             android:text="@string/showline"
-            android:textColor="#7FFFD4"
-            android:textSize="16sp" />
+            android:textColor="#000"
+            android:textSize="20sp" />
 
         <Spinner
             android:id="@+id/showlineselect"
@@ -38,8 +38,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="right"
             android:text="@string/linear"
-            android:textColor="#7FFFD4"
-            android:textSize="16sp" />
+            android:textColor="#000"
+            android:textSize="20sp" />
 
         <RadioGroup
             android:id="@+id/linearrad"
@@ -53,8 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/smoothline"
-                android:textColor="#7FFFD4"
-                android:textSize="16sp" />
+                android:textColor="#000"
+                android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/brokenline"
@@ -62,8 +62,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/brokenline"
-                android:textColor="#7FFFD4"
-                android:textSize="16sp" />
+                android:textColor="#000"
+                android:textSize="20sp" />
 
             <RadioButton
                 android:id="@+id/noline"
@@ -71,8 +71,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/noline"
-                android:textColor="#7FFFD4"
-                android:textSize="16sp" />
+                android:textColor="#000"
+                android:textSize="20sp" />
         </RadioGroup>
     </TableRow>
 
@@ -88,8 +88,8 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical"
             android:text="@string/numofnumtxt"
-            android:textColor="#7FFFD4"
-            android:textSize="16sp" />
+            android:textColor="#000"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/numofnum"
@@ -99,7 +99,7 @@
             android:ems="8"
             android:inputType="number"
             android:singleLine="true"
-            android:textSize="15sp" >
+            android:textSize="20sp" >
 
             <requestFocus />
         </EditText>

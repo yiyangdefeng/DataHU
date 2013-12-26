@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,13 +47,16 @@ public class FileAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView tv = new TextView(li.getContext());
-		tv.setWidth(LayoutParams.MATCH_PARENT);
+		tv.setWidth(LayoutParams.WRAP_CONTENT);
+		tv.setTextColor(Color.BLACK);
+		tv.setText("testtsasda");
+		return tv;
 		//if (convertView == null) {
 		//	convertView = li.inflate(R.layout.filecell,null);
 		//}
 		//tv = (TextView) convertView.findViewById(R.id.filecell);
 		//File file = new File(paths.get(position).toString());
-		if(items.get(position).toString().equals("root")) {
+		/*if(items.get(position).toString().equals("root")) {
 			tv.setText("根目录");
 		} else if (items.get(position).toString().equals("up")) {
 			tv.setText("上一级");
@@ -69,6 +73,6 @@ public class FileAdapter extends BaseAdapter {
 			
 		}
 		Log.e("test",tv.getText().toString());
-		return tv;
+		return tv;*/
 	}
 }

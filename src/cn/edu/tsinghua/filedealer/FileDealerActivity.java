@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +39,8 @@ public class FileDealerActivity extends ListActivity {
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.fileview);
 		pathtextview = (TextView) findViewById(R.id.filetextview);
 		getFileDir(rootpath);
@@ -67,17 +70,12 @@ public class FileDealerActivity extends ListActivity {
 		items.add("test3.jpg");
 		paths.add("test3path");
 		FileAdapter fa = new FileAdapter(this, items, paths);
-		for (int i = 0; i <items.size(); i++ ) {
-			Log.e("test",items.get(i));
-			Log.e("test",paths.get(i));
-		}
-		
-		setListAdapter(fa);
+		this.setListAdapter(fa);
 	}
 
 	@Override
-	protected void onListItemClick(ListView l, View arg1,
-			int position, long id) {
+	protected void onListItemClick(ListView l, View arg1, int position, long id) {
+		Log.e("test","touch valid at:" + position);
 		File selectedfile = new File(paths.get(position));
 		if (selectedfile.isDirectory()) {
 			getFileDir(paths.get(position));
