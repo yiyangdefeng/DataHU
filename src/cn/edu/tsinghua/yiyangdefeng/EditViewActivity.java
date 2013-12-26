@@ -40,14 +40,15 @@ public class EditViewActivity extends Activity {
 			.getExternalStorageDirectory() + "/DataHU/";
 	protected final static String DATA_PATH = Environment
 			.getExternalStorageDirectory() + "/DataHU/Data/";
-
+	boolean confirmedsaving;
 	protected DataManager dm;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		dm = new DataManager();
 		setContentView(R.layout.data_editview);
 		mygridview = new MyGridView(this);
@@ -433,9 +434,10 @@ public class EditViewActivity extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	protected void rowNumberInput(final int therowbefore) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(EditViewActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				EditViewActivity.this);
 		builder.setTitle("请输入要插入的列数");
 		final EditText et = new EditText(EditViewActivity.this);
 		et.setText(String.valueOf(1));
@@ -443,43 +445,39 @@ public class EditViewActivity extends Activity {
 		et.setClickable(true);
 		builder.setView(et);
 		builder.setCancelable(true);
-		builder.setPositiveButton("确定",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						try {
-							int newrows = Math.abs(Integer.parseInt(et.getText()
-									.toString()));
-							if (therowbefore != -1) {
-								for(int i = 0; i < newrows;i++) {
-									wholesheet.insertRow(therowbefore);
-									eca.notifyDataSetChanged();
-								}
-							}
-							else {
-								for (int i = 0;i < newrows;i++) {
-									wholesheet.insertRow();
-									eca.notifyDataSetChanged();
-							}
-							}
-						} catch (NumberFormatException nfe) {
-							Toast toast = Toast.makeText(
-									EditViewActivity.this, "您的输入有误",
-									Toast.LENGTH_SHORT);
-							toast.show();
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				try {
+					int newrows = Math.abs(Integer.parseInt(et.getText()
+							.toString()));
+					if (therowbefore != -1) {
+						for (int i = 0; i < newrows; i++) {
+							wholesheet.insertRow(therowbefore);
+							eca.notifyDataSetChanged();
+						}
+					} else {
+						for (int i = 0; i < newrows; i++) {
+							wholesheet.insertRow();
+							eca.notifyDataSetChanged();
 						}
 					}
-				});
-		builder.setNegativeButton("取消",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+				} catch (NumberFormatException nfe) {
+					Toast toast = Toast.makeText(EditViewActivity.this,
+							"您的输入有误", Toast.LENGTH_SHORT);
+					toast.show();
+				}
+			}
+		});
+		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
 
-					}
-				});
+			}
+		});
 		builder.show();
 	}
-	
+
 	public Boolean saveFile() {
 		File folderfile = new File(FOLDER_PATH);
 		String fileName = wholesheet.getName() + ".csv";
@@ -491,15 +489,45 @@ public class EditViewActivity extends Activity {
 			datafile.mkdir();
 		}
 		File datasavefile = new File(DATA_PATH + fileName);
-		
-		try {
-			dm.saveFile(wholesheet, datasavefile);	
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			Toast toast = Toast.makeText(EditViewActivity.this, "很抱歉，存储文件出错，请联系开发人员。",Toast.LENGTH_LONG);
-			toast.show();
-			return false;
+		confirmedsaving = true;
+		if (datasavefile.exists()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					EditViewActivity.this);
+			builder.setTitle("警告");
+			builder.setMessage("已存在重名文件，是否覆盖？");
+			builder.setCancelable(true);
+			builder.setNegativeButton("否",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							confirmedsaving = false;
+						}
+					});
+			builder.setPositiveButton("是",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
 		}
+		if (confirmedsaving) {
+			try {
+				dm.saveFile(wholesheet, datasavefile);
+				Toast toast = Toast
+						.makeText(EditViewActivity.this, "存储成功，数据保存在"
+								+ DATA_PATH + datasavefile.getName() + "。",
+								Toast.LENGTH_LONG);
+				toast.show();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Toast toast = Toast.makeText(EditViewActivity.this,
+						"很抱歉，存储文件出错，请联系开发人员。", Toast.LENGTH_LONG);
+				toast.show();
+				return false;
+			}
+		}
+		return true;
 	}
 }

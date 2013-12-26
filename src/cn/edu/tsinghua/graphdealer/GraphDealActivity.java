@@ -62,8 +62,10 @@ public class GraphDealActivity extends Activity implements
 	LinearLayout ll;
 	protected static final int FIGURE_VIEW = 0;
 
-	private final static String ALBUM_PATH = Environment
-			.getExternalStorageDirectory() + "/DataHU_Figure/";
+	private final static String FOLDER_PATH = Environment
+			.getExternalStorageDirectory() + "/DataHU/";
+	private final static String FIGURE_PATH = Environment
+			.getExternalStorageDirectory() + "/DataHU/Figure/";
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -131,23 +133,23 @@ public class GraphDealActivity extends Activity implements
 				Date date = new Date();
 				SimpleDateFormat time = new SimpleDateFormat(
 						"yyyy_MM_dd_HH_mm_ss");
-				String filename = time.format(date) + ".jpg";
+				String filename = time.format(date) + graphtitle + ".jpg";
 				Boolean b = saveFile(bitmap, filename);
 				if (b) {
-					saveinfo = "Success in Saving " + filename + " at "
-							+ ALBUM_PATH;
+					saveinfo = "保存图像 " + filename + " 在" + FIGURE_PATH + "成功！";
 				}
 			//} catch (IOException e) {
 			//	saveinfo = "The External Storage can not be used now OR other problem.";
 			//	e.printStackTrace();
 			//}
-
-			AlertDialog.Builder saveconfirm = new AlertDialog.Builder(this);
-			saveconfirm.setTitle(R.string.menu_save);
-			saveconfirm.setMessage(saveinfo);
-			saveconfirm.setPositiveButton(R.string.confirm, null);
-			saveconfirm.create();
-			saveconfirm.show();
+				Toast toast =Toast.makeText(GraphDealActivity.this, saveinfo, Toast.LENGTH_LONG);
+				toast.show();
+			//AlertDialog.Builder saveconfirm = new AlertDialog.Builder(this);
+			//saveconfirm.setTitle(R.string.menu_save);
+			//saveconfirm.setMessage(saveinfo);
+			//saveconfirm.setPositiveButton(R.string.confirm, null);
+			//saveconfirm.create();
+			//saveconfirm.show();
 
 			break;
 
@@ -537,16 +539,20 @@ public class GraphDealActivity extends Activity implements
 	}
 
 	public Boolean saveFile(Bitmap bm, String fileName) {
-		File dirFile = new File(ALBUM_PATH);
-		fileName = fileName.replace("/", "_");
+		File dirFile = new File(FOLDER_PATH);
 		if (!dirFile.exists()) {
 			dirFile.mkdir();
 		}
+		File figureFile = new File(FIGURE_PATH);
+		if(!figureFile.exists()) {
+			figureFile.mkdir();
+		}
+		fileName = fileName.replace("/", "_");
 		Matrix matrix = new Matrix();
 		matrix.postScale(2.5f, 2.5f);
 		Bitmap bigbm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
 				bm.getHeight(), matrix, true);
-		File myCaptureFile = new File(ALBUM_PATH + fileName);
+		File myCaptureFile = new File(FIGURE_PATH + fileName);
 		BufferedOutputStream bos;
 		try {
 			bos = new BufferedOutputStream(

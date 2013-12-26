@@ -66,6 +66,7 @@ public class GridViewActivity extends Activity {
 			.getExternalStorageDirectory() + "/DataHU/";
 	protected final static String DATA_PATH = Environment
 			.getExternalStorageDirectory() + "/DataHU/Data/";
+	protected boolean confirmedsaving;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -1046,6 +1047,7 @@ public class GridViewActivity extends Activity {
 		});
 		builder.show();
 	}
+	
 	public Boolean saveFile() {
 		File folderfile = new File(FOLDER_PATH);
 		String fileName = wholesheet.getName() + ".csv";
@@ -1057,15 +1059,45 @@ public class GridViewActivity extends Activity {
 			datafile.mkdir();
 		}
 		File datasavefile = new File(DATA_PATH + fileName);
-		
-		try {
-			dm.saveFile(wholesheet, datasavefile);	
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			Toast toast = Toast.makeText(GridViewActivity.this, "很抱歉，存储文件出错，请联系开发人员。",Toast.LENGTH_LONG);
-			toast.show();
-			return false;
+		confirmedsaving = true;
+		if (datasavefile.exists()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					GridViewActivity.this);
+			builder.setTitle("警告");
+			builder.setMessage("已存在重名文件，是否覆盖？");
+			builder.setCancelable(true);
+			builder.setNegativeButton("否",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							confirmedsaving = false;
+						}
+					});
+			builder.setPositiveButton("是",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+						}
+					});
 		}
+		if (confirmedsaving) {
+			try {
+				dm.saveFile(wholesheet, datasavefile);
+				Toast toast = Toast
+						.makeText(GridViewActivity.this, "存储成功，数据保存在"
+								+ DATA_PATH + datasavefile.getName() + "。",
+								Toast.LENGTH_LONG);
+				toast.show();
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				Toast toast = Toast.makeText(GridViewActivity.this,
+						"很抱歉，存储文件出错，请联系开发人员。", Toast.LENGTH_LONG);
+				toast.show();
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -15,7 +15,7 @@ import java.util.StringTokenizer;
 //row 2 : unit of each column
 //row 3 : type of each column
 public class DataManager {
-	public WholeSheet openFile(String filename) throws IOException {
+	public WholeSheet openFile(String filename) throws Exception {
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		String line = "";
 		line = br.readLine();
@@ -32,7 +32,10 @@ public class DataManager {
 		String dataname = st.nextToken();
 		st.nextToken();
 		String graphtitle = st.nextToken();
+		st.nextToken();
+		int digit = Integer.parseInt(st.nextToken());
 		WholeSheet wholesheet = new WholeSheet(columns,rows,width,height,dataname,graphtitle);
+		wholesheet.setDigit(digit);
 		
 		line = br.readLine();
 		st = new StringTokenizer(line,",");

@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.tsinghua.yiyangdefeng.DataManager;
 import cn.edu.tsinghua.yiyangdefeng.EditViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.GridViewActivity;
 import cn.edu.tsinghua.yiyangdefeng.MainActivity;
 import cn.edu.tsinghua.yiyangdefeng.R;
+import cn.edu.tsinghua.yiyangdefeng.Session;
+import cn.edu.tsinghua.yiyangdefeng.WholeSheet;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -25,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 @SuppressLint("DefaultLocale")
@@ -63,19 +67,13 @@ public class FileDealerActivity extends ListActivity {
 			items.add(tempfile.getName());
 			paths.add(tempfile.getPath());
 		}
-		items.add("test1.txt");
-		paths.add("test1path");
-		items.add("test2.csv");
-		paths.add("test2path");
-		items.add("test3.jpg");
-		paths.add("test3path");
 		FileAdapter fa = new FileAdapter(this, items, paths);
 		this.setListAdapter(fa);
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View arg1, int position, long id) {
-		Log.e("test","touch valid at:" + position);
+		Log.e("test", "touch valid at:" + position);
 		File selectedfile = new File(paths.get(position));
 		if (selectedfile.isDirectory()) {
 			getFileDir(paths.get(position));
@@ -94,20 +92,32 @@ public class FileDealerActivity extends ListActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Intent intent = new Intent();
-				Bundle bundle = new Bundle();
-				bundle.putString("FILENAME", selectedfile.getName());
-				if (which == 0) {
-					intent.setClass(FileDealerActivity.this,
-							EditViewActivity.class);
-					startActivity(intent, bundle);
-					finish();
+				DataManager dm = new DataManager();
+				try {
+					WholeSheet wholesheet = dm.openFile(selectedfile.getName());
+					Session.getSession().cleanUpSession();
+					Session session = Session.getSession();
+					session.put("wholesheet", wholesheet);
+					if (which == 0) {
+						intent.setClass(FileDealerActivity.this,
+								EditViewActivity.class);
+						startActivity(intent);
+						finish();
+					}
+					if (which == 1) {
+						intent.setClass(FileDealerActivity.this,
+								GridViewActivity.class);
+						startActivity(intent);
+						finish();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Toast toast = Toast.makeText(FileDealerActivity.this,
+							"读取文件出现问题，请确认文件格式，并确认此文件确实由本软件保存。",
+							Toast.LENGTH_LONG);
+					toast.show();
 				}
-				if (which == 1) {
-					intent.setClass(FileDealerActivity.this,
-							GridViewActivity.class);
-					startActivity(intent, bundle);
-					finish();
-				}
+
 			}
 		};
 		String[] openway = { "以编辑模式打开", "以查看模式打开" };
