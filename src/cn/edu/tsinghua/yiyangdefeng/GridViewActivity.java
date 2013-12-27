@@ -95,8 +95,7 @@ public class GridViewActivity extends Activity {
 		if (Session.getSession() == null) {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
-					+ EditCellAdapter.EXTRACOLUMNS);
-
+					+ GridCellAdapter.EXTRACOLUMNS);
 			setGridWidth();
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
@@ -105,7 +104,7 @@ public class GridViewActivity extends Activity {
 		} else if (Session.getSession().get("wholesheet") != null) {
 			wholesheet = (WholeSheet) Session.getSession().get("wholesheet");
 			mygridview.setNumColumns(wholesheet.getColumns()
-					+ EditCellAdapter.EXTRACOLUMNS);
+					+ GridCellAdapter.EXTRACOLUMNS);
 			setGridWidth();
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
@@ -115,8 +114,7 @@ public class GridViewActivity extends Activity {
 		} else {
 			wholesheet = new WholeSheet();
 			mygridview.setNumColumns(wholesheet.getColumns()
-					+ EditCellAdapter.EXTRACOLUMNS);
-
+					+ GridCellAdapter.EXTRACOLUMNS);
 			setGridWidth();
 			gca = new GridCellAdapter(getApplicationContext(), wholesheet);
 			mygridview.setAdapter(gca);
@@ -143,6 +141,7 @@ public class GridViewActivity extends Activity {
 			builder.setPositiveButton("确定", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
+					Session.getSession().cleanUpSession();
 					Intent intent = new Intent();
 					intent.setClass(GridViewActivity.this, MainActivity.class);
 					startActivity(intent);
@@ -433,7 +432,7 @@ public class GridViewActivity extends Activity {
 
 	public void setGridWidth() {
 		int width = wholesheet.calcWholeWidth() + (int) wholesheet.getWidth()
-				* EditCellAdapter.EXTRACOLUMNS;
+				* GridCellAdapter.EXTRACOLUMNS;
 		mygridview.setLayoutParams(new FrameLayout.LayoutParams(width, -1));
 	}
 
@@ -563,6 +562,7 @@ public class GridViewActivity extends Activity {
 					if (which == 4) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.sin(firstnumber), i);
@@ -570,6 +570,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 5) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.cos(firstnumber), i);
@@ -577,6 +578,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 6) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.tan(firstnumber), i);
@@ -584,6 +586,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 7) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData((1 / firstnumber), i);
@@ -591,6 +594,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 9) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.log(firstnumber), i);
@@ -598,6 +602,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 10) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.exp(firstnumber), i);
@@ -605,6 +610,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 11) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.asin(firstnumber), i);
@@ -612,6 +618,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 12) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.acos(firstnumber), i);
@@ -619,6 +626,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 13) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.atan(firstnumber), i);
@@ -626,6 +634,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 14) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							wholesheet.getColumn(wholesheet.getColumns() - 1)
 									.setData(Math.abs(firstnumber), i);
@@ -638,6 +647,7 @@ public class GridViewActivity extends Activity {
 					if (which == 4) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -649,6 +659,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 5) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -660,6 +671,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 6) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -671,6 +683,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 7) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -682,6 +695,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 9) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -693,6 +707,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 10) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -704,6 +719,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 11) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -715,6 +731,9 @@ public class GridViewActivity extends Activity {
 					} else if (which == 12) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
+						mygridview.setNumColumns(wholesheet.getColumns()
+								+ GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -726,6 +745,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 13) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -737,6 +757,7 @@ public class GridViewActivity extends Activity {
 					} else if (which == 14) {
 						wholesheet.insertColumn();
 						setGridWidth();
+						mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
 							if (wholesheet.getColumn(selectedcolumn).getData(i) != null) {
 								wholesheet.getColumn(
@@ -771,6 +792,7 @@ public class GridViewActivity extends Activity {
 					int selectedcolumn = Integer.parseInt(first);
 					wholesheet.insertColumn();
 					setGridWidth();
+					mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 					for (int i = 0; i < wholesheet.getRows(); i++) {
 						if (wholesheet.getColumn(selectedcolumn).getData(i) != null
 								&& wholesheet.getColumn(which).getData(i) != null) {
@@ -834,6 +856,7 @@ public class GridViewActivity extends Activity {
 					double firstnumber = Double.parseDouble(first);
 					wholesheet.insertColumn();
 					setGridWidth();
+					mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 					for (int i = 0; i < wholesheet.getRows(); i++) {
 						if (wholesheet.getColumn(which).getData(i) != null) {
 							switch (operator) {
@@ -927,6 +950,7 @@ public class GridViewActivity extends Activity {
 							.toString());
 					wholesheet.insertColumn();
 					setGridWidth();
+					mygridview.setNumColumns(wholesheet.getColumns() + GridCellAdapter.EXTRACOLUMNS);
 					if (firstiscolumn) {
 						int selectedcolumn = Integer.parseInt(first);
 						for (int i = 0; i < wholesheet.getRows(); i++) {
@@ -1058,8 +1082,7 @@ public class GridViewActivity extends Activity {
 		if (!datafile.exists()) {
 			datafile.mkdir();
 		}
-		File datasavefile = new File(DATA_PATH + fileName);
-		confirmedsaving = true;
+		final File datasavefile = new File(DATA_PATH + fileName);
 		if (datasavefile.exists()) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					GridViewActivity.this);
@@ -1070,34 +1093,36 @@ public class GridViewActivity extends Activity {
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							confirmedsaving = false;
 						}
 					});
 			builder.setPositiveButton("是",
 					new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-
+								confirmedtoSave(datasavefile);
 						}
 					});
+			builder.show();
 		}
-		if (confirmedsaving) {
-			try {
-				dm.saveFile(wholesheet, datasavefile);
-				Toast toast = Toast
-						.makeText(GridViewActivity.this, "存储成功，数据保存在"
-								+ DATA_PATH + datasavefile.getName() + "。",
-								Toast.LENGTH_LONG);
-				toast.show();
-				return true;
-			} catch (Exception e) {
-				e.printStackTrace();
-				Toast toast = Toast.makeText(GridViewActivity.this,
-						"很抱歉，存储文件出错，请联系开发人员。", Toast.LENGTH_LONG);
-				toast.show();
-				return false;
-			}
+		else {
+			confirmedtoSave(datasavefile);
 		}
 		return true;
+	}
+	
+	public void confirmedtoSave(File datasavefile) {
+		try {
+			dm.saveFile(wholesheet, datasavefile);
+			Toast toast = Toast
+					.makeText(GridViewActivity.this, "存储成功，数据保存在"
+							+ DATA_PATH + datasavefile.getName() + "。",
+							Toast.LENGTH_LONG);
+			toast.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Toast toast = Toast.makeText(GridViewActivity.this,
+					"很抱歉，存储文件出错，请联系开发人员。", Toast.LENGTH_LONG);
+			toast.show();
+		}
 	}
 }

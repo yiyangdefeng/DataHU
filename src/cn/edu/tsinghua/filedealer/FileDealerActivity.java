@@ -2,6 +2,8 @@ package cn.edu.tsinghua.filedealer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import cn.edu.tsinghua.yiyangdefeng.DataManager;
@@ -21,7 +23,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -56,6 +57,16 @@ public class FileDealerActivity extends ListActivity {
 		paths = new ArrayList<String>();
 		File myfile = new File(filepath);
 		File[] files = myfile.listFiles();
+		Arrays.sort(files, new Comparator<File>() {
+			@Override
+			public int compare(File file1, File file2) {
+				if (file1.isDirectory() && file2.isFile())
+					return -1;
+				if (file1.isFile() && file2.isDirectory())
+					return 1;
+				return file1.getName().compareTo(file2.getName());
+			}
+		});
 		if (!filepath.equals(rootpath)) {
 			items.add("root");
 			paths.add(rootpath);
@@ -73,7 +84,6 @@ public class FileDealerActivity extends ListActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View arg1, int position, long id) {
-		Log.e("test", "touch valid at:" + position);
 		File selectedfile = new File(paths.get(position));
 		if (selectedfile.isDirectory()) {
 			getFileDir(paths.get(position));
@@ -94,7 +104,7 @@ public class FileDealerActivity extends ListActivity {
 				Intent intent = new Intent();
 				DataManager dm = new DataManager();
 				try {
-					WholeSheet wholesheet = dm.openFile(selectedfile.getName());
+					WholeSheet wholesheet = dm.openFile(selectedfile);
 					Session.getSession().cleanUpSession();
 					Session session = Session.getSession();
 					session.put("wholesheet", wholesheet);
